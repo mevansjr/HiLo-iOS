@@ -9,7 +9,12 @@
 #import "MenuLayer.h"
 #import "GameLayer.h"
 #import "SimpleAudioEngine.h"
+#import "LeaderBoardViewController.h"
+#import "CCUIViewWrapper.h"
+#import "AppDelegate.h"
+#import "RootViewController.h"
 
+static const int kScrollSpeed = 2;
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
 
 @implementation MenuLayer
@@ -49,35 +54,90 @@
         //WIN SIZE
         CGSize size = [[CCDirector sharedDirector] winSize];
         
-        //MENU BACKGROUND
-        CCSprite *background;
+        //SCROLLING BACKGROUND -- MENU
         if (IS_IPHONE_5) {
-            background = [CCSprite spriteWithFile:@"menubg-568@2x.png"];
-        } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-            background = [CCSprite spriteWithFile:@"menubg.png"];
+            _bg1 = [CCSprite spriteWithFile:@"newmenubg568@2x.png"];
+            _bg1.position = CGPointMake(0, size.height * 0.5f);
+            _bg1.anchorPoint = CGPointMake(0, 0.5f);
+            [self addChild:_bg1];
+            _bg2 = [CCSprite spriteWithFile:@"newmenubg568@2x.png"];
+            _bg2.position = CGPointMake(_bg2.contentSize.width, _bg1.position.y);
+            _bg2.anchorPoint = CGPointMake(0, 0.5f);
+            [self addChild:_bg2];
+            CCSprite *logo = [CCSprite spriteWithFile:@"hilo-logo@2x.png"];
+            [logo setPosition:ccp(-125+size.width/2, -65+size.height/1)];
+            [self addChild:logo];
+            CCSprite *menu = [CCSprite spriteWithFile:@"menu568@2x.png"];
+            [menu setPosition:ccp(150+size.width/2, size.height/2)];
+            [self addChild:menu];
+        } else {
+            _bg1 = [CCSprite spriteWithFile:@"newmenubg.png"];
+            _bg1.position = CGPointMake(0, size.height * 0.5f);
+            _bg1.anchorPoint = CGPointMake(0, 0.5f);
+            [self addChild:_bg1];
+            _bg2 = [CCSprite spriteWithFile:@"newmenubg.png"];
+            _bg2.position = CGPointMake(_bg2.contentSize.width, _bg1.position.y);
+            _bg2.anchorPoint = CGPointMake(0, 0.5f);
+            [self addChild:_bg2];
+            CCSprite *logo = [CCSprite spriteWithFile:@"hilo-logo.png"];
+            [logo setPosition:ccp(-105+size.width/2, -65+size.height/1)];
+            [self addChild:logo];
+            CCSprite *menu = [CCSprite spriteWithFile:@"menu.png"];
+            [menu setPosition:ccp(130+size.width/2, size.height/2)];
+            [self addChild:menu];
         }
-        background.position = ccp(size.width/2, size.height/2);
-        [self addChild: background];
         
-        //CREATE BUTTON
-        CCMenuItemSprite *startGameImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"startgame.png"] selectedSprite:[CCSprite spriteWithFile:@"startgame.png"] target:self selector:@selector(buttonAction:)];
-        CCMenuItemSprite *howToImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"howto.png"] selectedSprite:[CCSprite spriteWithFile:@"howto.png"] target:self selector:@selector(buttonAction:)];
-        CCMenuItemSprite *settingsImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"settings.png"] selectedSprite:[CCSprite spriteWithFile:@"settings.png"] target:self selector:@selector(buttonAction:)];
+        //CREATE BUTTONS
+        CCMenuItemSprite *startGameImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"startgame.png"] selectedSprite:[CCSprite spriteWithFile:@"startgameOn.png"] target:self selector:@selector(buttonAction:)];
+        CCMenuItemSprite *leaderboardImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"leaderboard.png"] selectedSprite:[CCSprite spriteWithFile:@"leaderboardOn.png"] target:self selector:@selector(leaderBoardAction:)];
+        CCMenuItemSprite *howToImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"howto.png"] selectedSprite:[CCSprite spriteWithFile:@"howtoOn.png"] target:self selector:@selector(buttonAction:)];
+        CCMenuItemSprite *settingsImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"settings.png"] selectedSprite:[CCSprite spriteWithFile:@"settingsOn.png"] target:self selector:@selector(buttonAction:)];
         
         //CREATE MENU
         if (IS_IPHONE_5) {
-            CCMenu *myMenu = [CCMenu menuWithItems:startGameImage, howToImage, settingsImage, nil];
-            [myMenu setPosition:ccp(134 + size.width/2, -32 + size.height/2)];
-            [myMenu alignItemsVerticallyWithPadding:10.0];
+            CCMenu *myMenu = [CCMenu menuWithItems:startGameImage, leaderboardImage, howToImage, settingsImage, nil];
+            [myMenu setPosition:ccp(167 + size.width/2, -52 + size.height/2)];
+            [myMenu alignItemsVerticallyWithPadding:3.0];
             [self addChild:myMenu z:1];
         } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-            CCMenu *myMenu = [CCMenu menuWithItems:startGameImage, howToImage, settingsImage, nil];
-            [myMenu setPosition:ccp(93 + size.width/2, -32 + size.height/2)];
-            [myMenu alignItemsVerticallyWithPadding:10.0];
+            CCMenu *myMenu = [CCMenu menuWithItems:startGameImage, leaderboardImage, howToImage, settingsImage, nil];
+            [myMenu setPosition:ccp(143 + size.width/2, -45 + size.height/2)];
+            [myMenu alignItemsVerticallyWithPadding:3.0];
             [self addChild:myMenu z:1];
         }
+        
+        [self scheduleUpdate];
     }
+    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
+    
     return self;
+}
+
+-(void)update:(ccTime)delta
+{
+	CGPoint bg1Pos = _bg1.position;
+	CGPoint bg2Pos = _bg2.position;
+	bg1Pos.x -= kScrollSpeed;
+	bg2Pos.x -= kScrollSpeed;
+    
+	// move scrolling background back from left to right end to achieve "endless" scrolling
+	if (bg1Pos.x < -(_bg1.contentSize.width))
+	{
+		bg1Pos.x += _bg1.contentSize.width;
+		bg2Pos.x += _bg2.contentSize.width;
+	}
+    
+	// remove any inaccuracies by assigning only int values (this prevents floating point rounding errors accumulating over time)
+	bg1Pos.x = (int)bg1Pos.x;
+	bg2Pos.x = (int)bg2Pos.x;
+	_bg1.position = bg1Pos;
+	_bg2.position = bg2Pos;
+}
+
+- (void)leaderBoardAction:(id)sender
+{
+    //
 }
 
 - (void)buttonAction:(id)sender
@@ -109,6 +169,20 @@
 {
     CCTouchDispatcher *ccTouchDispatcher =[[CCTouchDispatcher alloc]init];
     [ccTouchDispatcher addStandardDelegate:self priority:0];
+}
+
+#pragma mark GCHelperDelegate
+
+- (void)matchStarted {
+    CCLOG(@"Match started");
+}
+
+- (void)matchEnded {
+    CCLOG(@"Match ended");
+}
+
+- (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {
+    CCLOG(@"Received data");
 }
 
 @end

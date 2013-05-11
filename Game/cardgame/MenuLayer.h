@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
+#import "GCHelper.h"
 
-@interface MenuLayer : CCLayer <CCStandardTouchDelegate>
+@interface MenuLayer : CCLayer <CCStandardTouchDelegate, GCHelperDelegate>
 {
-    
+    CCSprite *_bg1;
+    CCSprite *_bg2;
 }
 +(CCScene *) scene;
+-(void)update:(ccTime)delta;
 
 @end

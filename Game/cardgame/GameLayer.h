@@ -15,8 +15,15 @@
     int dealerInt;
     int playerInt;
     int scoreInt;
+    int passValue;
+    int maxBet;
+    CGPoint anteSpot;
     NSMutableArray *cardType;
     CCLabelTTF *scoreLabel;
+    CCLabelTTF *scoreLabels;
+    CCLabelTTF *betLabel;
+    CCLabelTTF *betLabels;
+    CCSprite *showAnte;
 }
 
 // returns a CCScene that contains the HelloWorldLayer as the only child

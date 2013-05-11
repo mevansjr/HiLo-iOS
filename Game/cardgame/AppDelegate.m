@@ -10,10 +10,12 @@
 
 #import "AppDelegate.h"
 #import "IntroLayer.h"
+#import "RootViewController.h"
+#import "GCHelper.h"
 
 @implementation AppController
 
-@synthesize window=window_, navController=navController_, director=director_;
+@synthesize window=window_, navController=navController_, director=director_, viewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -32,10 +34,14 @@
 
 	director_ = (CCDirectorIOS*) [CCDirector sharedDirector];
 
+    // Init the View Controller
+	viewController = [[RootViewController alloc] initWithNibName:nil bundle:nil];
+	viewController.wantsFullScreenLayout = YES;
+    
 	director_.wantsFullScreenLayout = YES;
 
 	// Display FSP and SPF
-	[director_ setDisplayStats:YES];
+	[director_ setDisplayStats:NO];
 
 	// set FPS at 60
 	[director_ setAnimationInterval:1.0/60];
@@ -72,9 +78,14 @@
 	// Assume that PVR images have premultiplied alpha
 	[CCTexture2D PVRImagesHavePremultipliedAlpha:YES];
 
+    // Try to start Game Center
+    [[GCHelper sharedInstance] authenticateLocalUser];
+    
 	// and add the scene to the stack. The director will run it when it automatically when the view is displayed.
-	[director_ pushScene: [IntroLayer scene]]; 
-
+	[director_ pushScene: [IntroLayer scene]];
+    
+    // make the View Controller a child of the main window
+	[window_ addSubview: viewController.view];
 	
 	// Create a Navigation Controller with the Director
 	navController_ = [[UINavigationController alloc] initWithRootViewController:director_];
