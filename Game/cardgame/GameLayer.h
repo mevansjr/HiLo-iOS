@@ -14,7 +14,9 @@
 {
     int dealerInt;
     int playerInt;
-    int scoreInt;
+    int startOffMoney;
+    int tempTotal;
+    int realTotal;
     int passValue;
     int maxBet;
     CGPoint anteSpot;

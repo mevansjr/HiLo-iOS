@@ -8,9 +8,10 @@
 
 
 #import "GameLayer.h"
-#import "AppDelegate.h"
 #import "SimpleAudioEngine.h"
 #import "MenuLayer.h"
+#import "AppDelegate.h"
+#import "RootViewController.h"
 
 #define randint(min, max) (arc4random() % ((max + 1) - min)) + min
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
@@ -64,12 +65,13 @@
         }
         
         //START WITH 1000 COINS
-        scoreInt = 1000;
+        startOffMoney = 1000;
+        realTotal = startOffMoney;
         maxBet = 500;
         passValue = 0;
         
         //CREATE SCORE LABEL
-        scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i",scoreInt] fontName:@"Georgia-Bold" fontSize:20];
+        scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", realTotal] fontName:@"Georgia-Bold" fontSize:20];
         if (IS_IPHONE_5) {
             [scoreLabel setPosition:ccp(-225+size.width/2, -17+size.height/1)];
         } else {
@@ -152,119 +154,172 @@
 
 - (void)resetBet
 {
+    tempTotal = realTotal + passValue;
+    realTotal = tempTotal;
+    [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
     passValue = 0;
     [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-    [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+    showAnte = [CCSprite spriteWithFile:@"bet.png"];
+    [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
+    [self addChild:showAnte];
 }
 
 - (void)callFive
 {
     int ante = 5;
-    passValue = passValue + ante;
-    int getTotal = scoreInt;
+    if (passValue == 0)
+    {
+        passValue = ante;
+    } else if (passValue > 0)
+    {
+        passValue = passValue + ante;
+    } else {
+        NSLog(@"%i",passValue);
+    }
+    
     if (passValue <= maxBet){
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
         passValue = 500;
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
         NSLog(@"MAX BET REACHED");
+        passValue = 500;
+        tempTotal = realTotal - passValue;
+        [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
 
-    if (passValue > scoreInt) {
+    if (realTotal < passValue) {
         NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
-        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-        [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+        showAnte = [CCSprite spriteWithFile:@"bet.png"];
+        [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnte];
     } else {
         showAnte = [CCSprite spriteWithFile:@"chip5.png"];
         [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
         [self addChild:showAnte];
+        [showAnte runAction:[CCRotateBy actionWithDuration:.5 angle:360]];
     }
 }
 
 - (void)callTwentyFive
 {
     int ante = 25;
-    passValue = passValue + ante;
-    int getTotal = scoreInt;
+    if (passValue == 0)
+    {
+        passValue = ante;
+    } else if (passValue > 0)
+    {
+        passValue = passValue + ante;
+    } else {
+        NSLog(@"%i",passValue);
+    }
+    
     if (passValue <= maxBet){
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
         passValue = 500;
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
         NSLog(@"MAX BET REACHED");
+        passValue = 500;
+        tempTotal = realTotal - passValue;
+        [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
     
-    if (passValue > scoreInt) {
+    if (realTotal < passValue) {
         NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
-        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-        [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+        showAnte = [CCSprite spriteWithFile:@"bet.png"];
+        [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnte];
-        
     } else {
         showAnte = [CCSprite spriteWithFile:@"chip25.png"];
         [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
         [self addChild:showAnte];
+        [showAnte runAction:[CCRotateBy actionWithDuration:.5 angle:360]];
     }
 }
 
 - (void)callOneHundred
 {
     int ante = 100;
-    passValue = passValue + ante;
-    int getTotal = scoreInt;
+    if (passValue == 0)
+    {
+        passValue = ante;
+    } else if (passValue > 0)
+    {
+        passValue = passValue + ante;
+    } else {
+        NSLog(@"%i",passValue);
+    }
+    
     if (passValue <= maxBet){
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
         passValue = 500;
-        getTotal = getTotal - passValue;
+        tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
         NSLog(@"MAX BET REACHED");
+        passValue = 500;
+        tempTotal = realTotal - passValue;
+        [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
     
-    if (passValue > scoreInt) {
+    if (realTotal < passValue) {
         NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
-        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-        [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+        showAnte = [CCSprite spriteWithFile:@"bet.png"];
+        [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnte];
     } else {
         showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-        [showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:1.0 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCMoveBy actionWithDuration:1.0 position:ccp(0, 0)]]];
+        //[showAnte setPosition:ccp(anteSpot.x+1, anteSpot.y+1)];
         [self addChild:showAnte];
+        [showAnte runAction:[CCRotateBy actionWithDuration:.5 angle:360]];
     }
+}
+
+- (void)reportScore
+{
+    [[GCHelper sharedInstance] reportScore:realTotal forLeaderboardID:@"highscore"];
 }
 
 - (void)endGame
 {
+    if (realTotal > 0)
+    {
+        [self reportScore];
+    }
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
 }
 
@@ -272,11 +327,11 @@
 {
     if (pass == 0)
     {
-        scoreInt = scoreInt + 5;
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MUST PLACE BET" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        [alert show];
     } else {
-        scoreInt = scoreInt + pass;
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+        realTotal = realTotal + pass;
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
     }
 }
 
@@ -284,13 +339,12 @@
 {
     if (pass == 0)
     {
-        scoreInt = scoreInt - 5;
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+        NSLog(@"PRE GAME OVER");
     } else {
-        scoreInt = scoreInt - pass;
-        [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+        realTotal = realTotal - pass;
+        [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
     }
-    if (scoreInt <= 0)
+    if (realTotal <= 0)
     {
         NSLog(@"GAME OVER");
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
@@ -301,8 +355,8 @@
 
 - (void)drawPoints
 {
-    scoreInt = scoreInt + 0;
-    [scoreLabel setString:[NSString stringWithFormat:@"%i", scoreInt]];
+    realTotal = realTotal + 0;
+    [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
 }
 
 -(void)randomCards
@@ -333,6 +387,7 @@
         playerCard.position = ccp(70+size.width/2, 48+size.height/2);
     }
     [self addChild:playerCard];
+    [playerCard runAction:[CCRotateBy actionWithDuration:.4 angle:360]];
 }
 
 - (void)higher:(id)sender

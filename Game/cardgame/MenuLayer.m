@@ -51,6 +51,8 @@ static const int kScrollSpeed = 2;
     {
         self.isTouchEnabled = YES;
         
+        [[GCHelper sharedInstance] retrieveTopTenScores];
+        
         //WIN SIZE
         CGSize size = [[CCDirector sharedDirector] winSize];
         
@@ -108,8 +110,8 @@ static const int kScrollSpeed = 2;
         
         [self scheduleUpdate];
     }
-    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
-    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
+//    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+//    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
     
     return self;
 }
@@ -137,7 +139,8 @@ static const int kScrollSpeed = 2;
 
 - (void)leaderBoardAction:(id)sender
 {
-    //
+    //AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+    [[GCHelper sharedInstance] showLeaderboard:@"highscore"];
 }
 
 - (void)buttonAction:(id)sender
@@ -183,6 +186,11 @@ static const int kScrollSpeed = 2;
 
 - (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {
     CCLOG(@"Received data");
+}
+
+- (void)onLeaderboardViewDismissed
+{
+    CCLOG(@"Leaderboard Dismissed");
 }
 
 @end

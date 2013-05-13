@@ -118,11 +118,30 @@ static GCHelper *sharedHelper = nil;
     
     if (!gameCenterAvailable) return;
     
-    NSLog(@"Authenticating local user...");
-    if ([GKLocalPlayer localPlayer].authenticated == NO) {
-        [[GKLocalPlayer localPlayer] authenticateWithCompletionHandler:nil];
-    } else {
-        NSLog(@"Already authenticated!");
+//    NSLog(@"Authenticating local user...");
+//    if ([GKLocalPlayer localPlayer].authenticated == NO) {
+//        [[GKLocalPlayer localPlayer] authenticateWithCompletionHandler:nil];
+//    } else {
+//        NSLog(@"Already authenticated!");
+//    }
+    if(gameCenterAvailable)
+    {
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error)
+        {
+            if (viewController != nil)
+            {                
+                [self presentViewController:viewController];
+            }
+            else if (localPlayer.isAuthenticated)
+            {
+                NSLog(@"Player authenticated");
+            }
+            else
+            {
+                NSLog(@"Player authentication failed: %@", error.description);
+            }
+        };
     }
 }
 
@@ -176,6 +195,101 @@ static GCHelper *sharedHelper = nil;
     NSLog(@"Match failed with error: %@", error.localizedDescription);
     matchStarted = NO;
     [delegate matchEnded];
+}
+
+-(UIViewController*) getRootViewController
+{
+    return [UIApplication sharedApplication].keyWindow.rootViewController;
+}
+
+-(void) presentViewController:(UIViewController*)vc
+{
+    UIViewController* rootVC = [self getRootViewController];
+    [rootVC presentModalViewController:vc animated:YES];
+}
+
+-(void) dismissModalViewController
+{
+    UIViewController* rootVC = [self getRootViewController];
+    [rootVC dismissModalViewControllerAnimated:YES];
+}
+
+-(void) gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController
+{
+    [self dismissModalViewController];
+    [delegate onLeaderboardViewDismissed];
+}
+
+- (void) showLeaderboard: (NSString*) leaderboardID
+{
+//    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
+//    if (gameCenterController != nil)
+//    {
+//        GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+//        leaderboardRequest.category = @"highscore";
+//        
+//        gameCenterController.gameCenterDelegate = self;
+//        gameCenterController.viewState = GKGameCenterViewControllerStateLeaderboards;
+//        gameCenterController.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
+//        gameCenterController.leaderboardCategory = leaderboardID;
+//        
+//        [self presentViewController: gameCenterController];
+//    }
+    GKLeaderboardViewController *leaderboardController = [[GKLeaderboardViewController alloc] init];
+    if (leaderboardController != nil)
+    {
+        leaderboardController.leaderboardDelegate = self;
+        leaderboardController.category = @"highscore";
+        leaderboardController.leaderboardCategory = leaderboardID;
+        leaderboardController.leaderboardTimeScope = GKLeaderboardTimeScopeAllTime;
+        [self presentViewController:leaderboardController];
+    }
+}
+
+- (void)retrieveTopTenScores
+{
+    GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+    if (leaderboardRequest != nil)
+    {
+        leaderboardRequest.playerScope = GKLeaderboardPlayerScopeGlobal;
+        leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
+        leaderboardRequest.category = @"highscore";
+        [leaderboardRequest loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
+            if (error != nil)
+            {
+                // Handle the error.
+            }
+            if (scores != nil)
+            {
+                // Process the score information.
+                NSLog(@"Count: %i", scores.count);
+                NSLog(@"%@", scores.description);
+            }
+        }];
+    }
+}
+
+-(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController
+{
+    [self dismissModalViewController];
+    [delegate onLeaderboardViewDismissed];
+}
+
+- (void) reportScore: (int64_t) score forLeaderboardID: (NSString*) category
+{
+    GKScore *scoreReporter = [[GKScore alloc] initWithCategory:category];
+    scoreReporter.value = score;
+    scoreReporter.context = 0;
+    
+    [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            if (error == NULL) {
+                NSLog(@"Score Sent");
+            } else {
+                NSLog(@"Score Failed");
+            }
+        });
+    }];
 }
 
 @end
