@@ -222,6 +222,8 @@
 		5D61ACC2173D507E00E9A100 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61ACC0173D506B00E9A100 /* FacebookSDK.framework */; };
 		5D61ACC3173D507E00E9A100 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61ACC1173D506B00E9A100 /* Parse.framework */; };
 		5D61ACC7173D55E500E9A100 /* MenuLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D61ABBA173ADBDF00E9A100 /* MenuLayer.m */; };
+		5D7D3C28174274B600EE4847 /* chip_h.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D7D3C26174274B600EE4847 /* chip_h.png */; };
+		5D7D3C29174274B600EE4847 /* chip_h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D7D3C27174274B600EE4847 /* chip_h@2x.png */; };
 		5DBB0ECF173D633100109C11 /* CCUIViewWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB0ECE173D633100109C11 /* CCUIViewWrapper.m */; };
 		5DBB0ED2173D6DF100109C11 /* GCHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB0ED1173D6DF100109C11 /* GCHelper.m */; };
 		5DBB0ED5173D727900109C11 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB0ED4173D727900109C11 /* RootViewController.m */; };
@@ -587,6 +589,8 @@
 		5D61ACBE173D4FA900E9A100 /* LeaderBoardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeaderBoardViewController.m; sourceTree = "<group>"; };
 		5D61ACC0173D506B00E9A100 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = cardgame/FacebookSDK.framework; sourceTree = "<group>"; };
 		5D61ACC1173D506B00E9A100 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = cardgame/Parse.framework; sourceTree = "<group>"; };
+		5D7D3C26174274B600EE4847 /* chip_h.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = chip_h.png; path = Resources/chip_h.png; sourceTree = "<group>"; };
+		5D7D3C27174274B600EE4847 /* chip_h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "chip_h@2x.png"; path = "Resources/chip_h@2x.png"; sourceTree = "<group>"; };
 		5DBB0ECD173D633100109C11 /* CCUIViewWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCUIViewWrapper.h; sourceTree = "<group>"; };
 		5DBB0ECE173D633100109C11 /* CCUIViewWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCUIViewWrapper.m; sourceTree = "<group>"; };
 		5DBB0ED0173D6DF100109C11 /* GCHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCHelper.h; sourceTree = "<group>"; };
@@ -710,6 +714,8 @@
 				5D61ABAF173AD93900E9A100 /* tune.wav */,
 				5D61ABB0173AD93900E9A100 /* wrong.wav */,
 				5D61ABAB173AD8CE00E9A100 /* musicloop.wav */,
+				5D7D3C26174274B600EE4847 /* chip_h.png */,
+				5D7D3C27174274B600EE4847 /* chip_h@2x.png */,
 				5DBCD1C51741213A00012B5F /* bet.png */,
 				5DBCD1C61741213A00012B5F /* bet@2x.png */,
 				5D61AC11173D1E2C00E9A100 /* hilo-logo.png */,
@@ -1318,6 +1324,8 @@
 				5D61ACBC173D4F5E00E9A100 /* CustomCell.xib in Resources */,
 				5DBCD1C71741213A00012B5F /* bet.png in Resources */,
 				5DBCD1C81741213A00012B5F /* bet@2x.png in Resources */,
+				5D7D3C28174274B600EE4847 /* chip_h.png in Resources */,
+				5D7D3C29174274B600EE4847 /* chip_h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

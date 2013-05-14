@@ -10,8 +10,9 @@
 #import <GameKit/GameKit.h>
 #import "cocos2d.h"
 
-@interface GameLayer : CCLayer
+@interface GameLayer : CCLayer <CCStandardTouchDelegate, UIGestureRecognizerDelegate>
 {
+    CGSize size;
     int dealerInt;
     int playerInt;
     int startOffMoney;
@@ -19,16 +20,22 @@
     int realTotal;
     int passValue;
     int maxBet;
+    int moneyflag;
     CGPoint anteSpot;
+    CCSprite *selSprite;
+    CGPoint location;
     NSMutableArray *cardType;
     CCLabelTTF *scoreLabel;
     CCLabelTTF *scoreLabels;
     CCLabelTTF *betLabel;
     CCLabelTTF *betLabels;
     CCSprite *showAnte;
+    CCSprite *showAnteSpot;
+    UISwipeGestureRecognizer * _swipeUpRecognizer;
+    UISwipeGestureRecognizer * _swipeDownRecognizer;
 }
-
-// returns a CCScene that contains the HelloWorldLayer as the only child
+@property (retain) UISwipeGestureRecognizer * swipeUpRecognizer;
+@property (retain) UISwipeGestureRecognizer * swipeDownRecognizer;
 +(CCScene *) scene;
 
 @end
