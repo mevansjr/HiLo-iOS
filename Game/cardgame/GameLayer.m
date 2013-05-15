@@ -12,6 +12,7 @@
 #import "MenuLayer.h"
 #import "AppDelegate.h"
 #import "RootViewController.h"
+#import "Reachability.h"
 
 #define randint(min, max) (arc4random() % ((max + 1) - min)) + min
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
@@ -39,7 +40,6 @@
         size = [[CCDirector sharedDirector] winSize];
         
         //MENU BACKGROUND
-        CCSprite *background;
         if (IS_IPHONE_5) {
             background = [CCSprite spriteWithFile:@"gamebg-568@2x.png"];
         } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
@@ -147,6 +147,13 @@
 	return self;
 }
 
+- (BOOL)connected
+{
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    return !(networkStatus == NotReachable);
+}
+
 - (void)onEnterTransitionDidFinish
 {
     CCTouchDispatcher *ccTouchDispatcher =[[CCTouchDispatcher alloc]init];
@@ -161,6 +168,81 @@
     _swipeDownRecognizer.delegate = self;
     _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [[CCDirector sharedDirector].view addGestureRecognizer:_swipeDownRecognizer];
+    
+    UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanFrom:)];
+    [[CCDirector sharedDirector].view addGestureRecognizer:gestureRecognizer];
+}
+
+- (void)selectSpriteForTouch:(CGPoint)touchLocation theSprite:(CCSprite*)sprite
+{
+    CCSprite * newSprite = nil;
+    if (CGRectContainsPoint(showAnte.boundingBox, touchLocation)) {
+        newSprite = showAnte;
+    }
+    selSprite = newSprite;
+}
+
+- (CGPoint)boundLayerPos:(CGPoint)newPos {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    CGPoint retval = newPos;
+    retval.x = MIN(retval.x, 0);
+    retval.x = MAX(retval.x, -background.contentSize.width+winSize.width);
+    retval.y = self.position.y;
+    return retval;
+}
+
+- (void)panForTranslation:(CGPoint)translation {
+    CGPoint newPos = CGPointMake(0, 0);
+    if (selSprite) {
+        newPos = ccpAdd(selSprite.position, translation);
+        selSprite.position = newPos;
+    } else {
+        newPos = ccpAdd(self.position, translation);
+        self.position = [self boundLayerPos:newPos];
+    }
+}
+
+- (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
+    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+    
+    CGPoint oldTouchLocation = [touch previousLocationInView:touch.view];
+    oldTouchLocation = [[CCDirector sharedDirector] convertToGL:oldTouchLocation];
+    oldTouchLocation = [self convertToNodeSpace:oldTouchLocation];
+    
+    CGPoint translation = ccpSub(touchLocation, oldTouchLocation);
+    [self panForTranslation:translation];
+}
+
+- (void)handlePanFrom:(UIPanGestureRecognizer *)recognizer {
+    
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        
+        CGPoint touchLocation = [recognizer locationInView:recognizer.view];
+        touchLocation = [[CCDirector sharedDirector] convertToGL:touchLocation];
+        touchLocation = [self convertToNodeSpace:touchLocation];
+        [self selectSpriteForTouch:touchLocation theSprite:showAnte];
+        
+    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        
+        CGPoint translation = [recognizer translationInView:recognizer.view];
+        translation = ccp(translation.x, -translation.y);
+        [self panForTranslation:translation];
+        [recognizer setTranslation:CGPointZero inView:recognizer.view];
+        
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        
+        if (!selSprite) {
+            float scrollDuration = 0.2;
+            CGPoint velocity = [recognizer velocityInView:recognizer.view];
+            CGPoint newPos = ccpAdd(self.position, ccpMult(velocity, scrollDuration));
+            newPos = [self boundLayerPos:newPos];
+            
+            [self stopAllActions];
+            CCMoveTo *moveTo = [CCMoveTo actionWithDuration:scrollDuration position:newPos];
+            [self runAction:[CCEaseOut actionWithAction:moveTo rate:1]];
+        }
+        
+    }
 }
 
 -(void)handleSwipeUp
@@ -175,7 +257,8 @@
      NSLog(@"SWIPED DOWN -- Lower");
 }
 
--(void) onExit{
+-(void)onExit
+{
     NSArray *grs = [[[CCDirector sharedDirector] view] gestureRecognizers];
     
     for (UIGestureRecognizer *gesture in grs){
@@ -202,43 +285,81 @@
     [self addChild:showAnte];
 }
 
+-(void)update:(ccTime)delta
+{
+    //COLLISION DETECTION
+    NSLog(@"COLLISION CHECK RAN");
+    if (CGRectContainsPoint(showAnteSpot.boundingBox, showAnte.position))
+    {
+        if (CGRectIntersectsRect(showAnteSpot.boundingBox, showAnte.boundingBox)) {
+            NSLog(@"TOUCHED ON ANTE SPOT");
+            if (moneyflag == 0)
+            {
+                NSLog(@"FLAG NOT SET");
+            } else if (moneyflag == 1) {
+                [self performSelector:@selector(callFive) withObject:nil afterDelay:2.0];
+                NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
+            } else if (moneyflag == 2) {
+                [self performSelector:@selector(callTwentyFive) withObject:nil afterDelay:2.0];
+                NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
+            } else if (moneyflag == 3) {
+                [self performSelector:@selector(callOneHundred) withObject:nil afterDelay:2.0];
+                NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
+            } else {
+                NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+            }
+        }
+    } else {
+        [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:3.2];
+    }
+}
+
 - (void)runFive
 {
-    showAnte = [CCSprite spriteWithFile:@"chip_h.png"];
+    showAnte = [CCSprite spriteWithFile:@"chip5.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+size.width/2, -81+size.height/2)];
+        [showAnte setPosition:ccp(-226+35+size.width/2, -81+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+size.width/2, -101+size.height/2)];
+        [showAnte setPosition:ccp(-196+35+size.width/2, -101+size.height/2)];
     }
     [self addChild:showAnte];
     moneyflag = 1;
-    [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
+    
+    //RUN COLLISION CHECK
+    [self scheduleOnce:@selector(update:) delay:3.2];
+    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)runTwentyFive
 {
-    showAnte = [CCSprite spriteWithFile:@"chip_h.png"];
+    showAnte = [CCSprite spriteWithFile:@"chip25.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+size.width/2, -39+size.height/2)];
+        [showAnte setPosition:ccp(-226+35+size.width/2, -39+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+size.width/2, -59+size.height/2)];
+        [showAnte setPosition:ccp(-196+35+size.width/2, -59+size.height/2)];
     }
     [self addChild:showAnte];
     moneyflag = 2;
-    [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
+    
+    //RUN COLLISION CHECK
+    [self scheduleOnce:@selector(update:) delay:3.2];
+    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)runOneHundred
 {
-    showAnte = [CCSprite spriteWithFile:@"chip_h.png"];
+    showAnte = [CCSprite spriteWithFile:@"chip100.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+size.width/2, 3+size.height/2)];
+        [showAnte setPosition:ccp(-226+35+size.width/2, 3+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+size.width/2, -17+size.height/2)];
+        [showAnte setPosition:ccp(-196+35+size.width/2, -17+size.height/2)];
     }
     [self addChild:showAnte];
     moneyflag = 3;
-    [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
+    
+    //RUN COLLISION CHECK
+    [self scheduleOnce:@selector(update:) delay:3.2];
+    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)removeHchip:(CCSprite *)sprite
@@ -288,14 +409,14 @@
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
     } else {
-        showAnte = [CCSprite spriteWithFile:@"chip5.png"];
-        if (IS_IPHONE_5) {
-            [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
-        } else {
-            [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
-        }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-        [self addChild:showAnte];
+//        showAnte = [CCSprite spriteWithFile:@"chip5.png"];
+//        if (IS_IPHONE_5) {
+//            [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
+//        } else {
+//            [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
+//        }
+//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+//        [self addChild:showAnte];
     }
 }
 
@@ -340,14 +461,14 @@
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
     } else {
-        showAnte = [CCSprite spriteWithFile:@"chip25.png"];
-        if (IS_IPHONE_5) {
-            [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
-        } else {
-            [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
-        }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-        [self addChild:showAnte];
+//        showAnte = [CCSprite spriteWithFile:@"chip25.png"];
+//        if (IS_IPHONE_5) {
+//            [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
+//        } else {
+//            [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
+//        }
+//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+//        [self addChild:showAnte];
     }
 }
 
@@ -392,14 +513,14 @@
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
     } else {
-        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-        if (IS_IPHONE_5) {
-            [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
-        } else {
-            [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
-        }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-        [self addChild:showAnte];
+//        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
+//        if (IS_IPHONE_5) {
+//            [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
+//        } else {
+//            [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
+//        }
+//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+//        [self addChild:showAnte];
     }
 }
 
@@ -602,33 +723,7 @@
         location = [touch locationInView:touch.view];
         location = [[CCDirector sharedDirector]convertToGL:location];
         
-        //TOUCH POINT -- ANTE SPOT
-        if (showAnteSpot != nil) {
-            CGRect showAnteRect = CGRectMake(showAnteSpot.boundingBox.origin.x, showAnteSpot.boundingBox.origin.y, showAnteSpot.boundingBox.size.width, showAnteSpot.boundingBox.size.height);
-            
-            CGRect *checkForAnte = CGRectContainsPoint(showAnteRect,location);
-            if (checkForAnte)
-            {
-                if (moneyflag == 0)
-                {
-                    NSLog(@"FLAG NOT SET");
-                } else if (moneyflag == 1) {
-                    [self callFive];
-                    NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
-                } else if (moneyflag == 2) {
-                    [self callTwentyFive];
-                    NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
-                } else if (moneyflag == 3) {
-                    [self callOneHundred];
-                    NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
-                } else {
-                    NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
-                }
-            } else {
-                NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
-                
-            }
-        }
+        [self selectSpriteForTouch:location theSprite:showAnte];
     }
 }
 

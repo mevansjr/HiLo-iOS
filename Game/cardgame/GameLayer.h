@@ -21,6 +21,7 @@
     int passValue;
     int maxBet;
     int moneyflag;
+    CCSprite *background;
     CGPoint anteSpot;
     CCSprite *selSprite;
     CGPoint location;
@@ -37,5 +38,6 @@
 @property (retain) UISwipeGestureRecognizer * swipeUpRecognizer;
 @property (retain) UISwipeGestureRecognizer * swipeDownRecognizer;
 +(CCScene *) scene;
+-(void)update:(ccTime)delta;
 
 @end
