@@ -628,7 +628,7 @@
         if (dealerInt == playerInt) {
             NSLog(@"DRAW");
             //[self drawPoints];
-            [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
+            [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.mp3"];
         } else if (dealerInt > playerInt) {
             NSLog(@"PLAYER WINS");
             [self addPoints:passValue];

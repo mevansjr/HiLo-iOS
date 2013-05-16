@@ -32,8 +32,8 @@ static const int kScrollSpeed = 2;
     [super onEnter];
     
     //LOAD BACKGROUND MUSIC
-    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"musicloop.wav" loop:YES];
-    [[SimpleAudioEngine sharedEngine] preloadEffect:@"musicloop.wav"];
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"music.wav" loop:YES];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"music.wav"];
 }
 
 -(void) onExit
