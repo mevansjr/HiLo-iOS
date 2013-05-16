@@ -170,6 +170,7 @@
     [[CCDirector sharedDirector].view addGestureRecognizer:_swipeDownRecognizer];
     
     UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanFrom:)];
+    gestureRecognizer.delegate = self;
     [[CCDirector sharedDirector].view addGestureRecognizer:gestureRecognizer];
 }
 
@@ -310,6 +311,7 @@
             }
         }
     } else {
+        NSLog(@"COLLISION DID NOT OCCUR -- REMOVE CHIP");
         [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:3.2];
     }
 }
@@ -327,7 +329,6 @@
     
     //RUN COLLISION CHECK
     [self scheduleOnce:@selector(update:) delay:3.2];
-    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)runTwentyFive
@@ -343,7 +344,6 @@
     
     //RUN COLLISION CHECK
     [self scheduleOnce:@selector(update:) delay:3.2];
-    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)runOneHundred
@@ -359,7 +359,6 @@
     
     //RUN COLLISION CHECK
     [self scheduleOnce:@selector(update:) delay:3.2];
-    //[self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:2];
 }
 
 - (void)removeHchip:(CCSprite *)sprite
@@ -408,15 +407,6 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
-    } else {
-//        showAnte = [CCSprite spriteWithFile:@"chip5.png"];
-//        if (IS_IPHONE_5) {
-//            [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
-//        } else {
-//            [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
-//        }
-//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-//        [self addChild:showAnte];
     }
 }
 
@@ -460,15 +450,6 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
-    } else {
-//        showAnte = [CCSprite spriteWithFile:@"chip25.png"];
-//        if (IS_IPHONE_5) {
-//            [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
-//        } else {
-//            [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
-//        }
-//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-//        [self addChild:showAnte];
     }
 }
 
@@ -512,15 +493,6 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
-    } else {
-//        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-//        if (IS_IPHONE_5) {
-//            [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
-//        } else {
-//            [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
-//        }
-//        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-//        [self addChild:showAnte];
     }
 }
 

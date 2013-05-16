@@ -694,14 +694,11 @@
 		5D61AA1D173AC01800E9A100 /* cardgame */ = {
 			isa = PBXGroup;
 			children = (
-				5D61AB95173AC01A00E9A100 /* AppDelegate.h */,
-				5D61AB96173AC01A00E9A100 /* AppDelegate.m */,
 				5DBCD1C4174105F400012B5F /* Cocos2d Scenes */,
 				5DBCD1C21741056900012B5F /* Traditional Classes */,
 				5DFDEBB9174104ED005656D6 /* Connection */,
 				5DBCD1C3174105A700012B5F /* GameKit */,
 				5D61AA1E173AC01800E9A100 /* Resources */,
-				5DBB0ED6173D72A100109C11 /* GameConfig.h */,
 				5D61AA38173AC01800E9A100 /* libs */,
 				5D61AB91173AC01A00E9A100 /* Supporting Files */,
 			);
@@ -1173,6 +1170,8 @@
 		5DBCD1C4174105F400012B5F /* Cocos2d Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				5D61AB95173AC01A00E9A100 /* AppDelegate.h */,
+				5D61AB96173AC01A00E9A100 /* AppDelegate.m */,
 				5D61AB98173AC01A00E9A100 /* GameLayer.h */,
 				5D61AB99173AC01A00E9A100 /* GameLayer.m */,
 				5D61ABB9173ADBDF00E9A100 /* MenuLayer.h */,
@@ -1181,6 +1180,7 @@
 				5D61AB9C173AC01A00E9A100 /* IntroLayer.m */,
 				5DBB0ECD173D633100109C11 /* CCUIViewWrapper.h */,
 				5DBB0ECE173D633100109C11 /* CCUIViewWrapper.m */,
+				5DBB0ED6173D72A100109C11 /* GameConfig.h */,
 			);
 			name = "Cocos2d Scenes";
 			sourceTree = "<group>";
