@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import "RootViewController.h"
 #import "Reachability.h"
+#import "CreditsLayer.h"
 
 #define randint(min, max) (arc4random() % ((max + 1) - min)) + min
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
@@ -35,6 +36,15 @@
 {
 	if( (self=[super init]) ) {
         self.isTouchEnabled = YES;
+        
+        AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSMutableArray *t = [defaults objectForKey:@"scoresArray"];
+        if (t.count > 0){
+            scoresArray = [[NSMutableArray alloc]initWithArray:t];
+        } else {
+            scoresArray = [[NSMutableArray alloc]initWithArray:app.scoresArray];
+        }
         
         //WIN SIZE
         size = [[CCDirector sharedDirector] winSize];
@@ -80,9 +90,9 @@
         //CREATE SCORE LABEL
         scoreLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"%i", realTotal] fontName:@"Georgia-Bold" fontSize:20];
         if (IS_IPHONE_5) {
-            [scoreLabel setPosition:ccp(-220+size.width/2, -17+size.height/1)];
+            [scoreLabel setPosition:ccp(-217+size.width/2, -17+size.height/1)];
         } else {
-            [scoreLabel setPosition:ccp(-180+size.width/2, -17+size.height/1)];
+            [scoreLabel setPosition:ccp(-177+size.width/2, -17+size.height/1)];
         }
 		[self addChild:scoreLabel z:1];
         [scoreLabel setColor:ccYELLOW];
@@ -106,21 +116,22 @@
 		[self addChild:betLabel z:1];
         [betLabel setColor:ccWHITE];
         
-        //CREATE CLOSE BUTTON
-        CCMenuItemSprite *closeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"close.png"] selectedSprite:[CCSprite spriteWithFile:@"closeOn.png"] target:self selector:@selector(endGame)];
-        CCMenu *closemenu = [CCMenu menuWithItems:closeImage, nil];
+        //CREATE PAUSE BUTTON
+        CCMenuItemSprite *pauseImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"pause.png"] selectedSprite:[CCSprite spriteWithFile:@"pause.png"] target:self selector:@selector(pauseMenu)];
+        pausemenu = [CCMenu menuWithItems:pauseImage, nil];
         if (IS_IPHONE_5) {
-            [closemenu setPosition:ccp(220+size.width/2, -25+size.height/1)];
+            [pausemenu setPosition:ccp(245+size.width/2, -20+size.height/1)];
         } else {
-            [closemenu setPosition:ccp(190+size.width/2, -25+size.height/1)];
+            [pausemenu setPosition:ccp(215+size.width/2, -20+size.height/1)];
         }
-        [self addChild:closemenu z:1];
+        [self addChild:pausemenu z:1];
         
         //CREATE GAMEPLAY MENU
+        CCMenuItemSprite *closeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"close.png"] selectedSprite:[CCSprite spriteWithFile:@"closeOn.png"] target:self selector:@selector(endGame)];
         CCMenuItemSprite *hi = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"higherButton.png"] selectedSprite:[CCSprite spriteWithFile:@"higherButtonOn.png"] target:self selector:@selector(higher)];
         CCMenuItemSprite *lo = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"lowerButton.png"] selectedSprite:[CCSprite spriteWithFile:@"lowerButtonOn.png"] target:self selector:@selector(lower)];
         CCMenuItemSprite *clear = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"clear.png"] selectedSprite:[CCSprite spriteWithFile:@"clearOn.png"] target:self selector:@selector(resetBet)];
-        CCMenu *menu = [CCMenu menuWithItems:hi, lo, clear, nil];
+        CCMenu *menu = [CCMenu menuWithItems:closeImage, hi, lo, clear, nil];
         if (IS_IPHONE_5) {
             [menu setPosition:ccp(-68+size.width/1, size.height/2)];
         } else {
@@ -145,6 +156,54 @@
         [self randomCards];
 	}
 	return self;
+}
+
+-(void)pauseMenu
+{
+    //ADD PAUSE BG
+    if (IS_IPHONE_5) {
+        pausebg = [CCSprite spriteWithFile:@"pausebg-568@2x.png"];
+        [pausebg setPosition:ccp(size.width/2, size.height/2)];
+        [self addChild:pausebg];
+        [pausebg setVisible:TRUE];
+    } else {
+        pausebg = [CCSprite spriteWithFile:@"pausebg.png"];
+        [pausebg setPosition:ccp(size.width/2, size.height/2)];
+        [self addChild:pausebg];
+        [pausebg setVisible:TRUE];
+    }
+    
+    [self removeChild:pausemenu cleanup:TRUE];
+    //ADD RESUME MENU
+    CCMenuItemSprite *resumeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"resume.png"] selectedSprite:[CCSprite spriteWithFile:@"resume.png"] target:self selector:@selector(resumeMenu)];
+    resumemenu = [CCMenu menuWithItems:resumeImage, nil];
+    if (IS_IPHONE_5) {
+        [resumemenu setPosition:ccp(245+size.width/2, -20+size.height/1)];
+    } else {
+        [resumemenu setPosition:ccp(215+size.width/2, -20+size.height/1)];
+    }
+    [self addChild:resumemenu z:1];
+}
+
+-(void)removePauseMenuBg
+{
+    [pausebg setVisible:FALSE];
+}
+
+-(void)resumeMenu
+{
+    [pausebg runAction:[CCSequence actionOne:[CCFadeOut actionWithDuration:1.0] two:[CCCallFunc actionWithTarget:self selector:@selector(removePauseMenuBg)]]];
+    [self removeChild:resumemenu cleanup:TRUE];
+    //ADD PAUSE BUTTON
+    CCMenuItemSprite *pauseImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"pause.png"] selectedSprite:[CCSprite spriteWithFile:@"pause.png"] target:self selector:@selector(pauseMenu)];
+    pausemenu = [CCMenu menuWithItems:pauseImage, nil];
+    if (IS_IPHONE_5) {
+        [pausemenu setPosition:ccp(245+size.width/2, -20+size.height/1)];
+    } else {
+        [pausemenu setPosition:ccp(215+size.width/2, -20+size.height/1)];
+    }
+    [self addChild:pausemenu z:1];
+    
 }
 
 - (BOOL)connected
@@ -503,9 +562,14 @@
 
 - (void)endGame
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (realTotal > 0)
     {
         [self reportScore];
+        NSNumber *n = [[NSNumber alloc]initWithInt:realTotal];
+        [scoresArray addObject:n];
+        [defaults setObject:scoresArray forKey:@"scoresArray"];
+        [defaults synchronize];
     }
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
 }
@@ -696,6 +760,12 @@
         location = [[CCDirector sharedDirector]convertToGL:location];
         
         [self selectSpriteForTouch:location theSprite:showAnte];
+        
+        if (pausebg != nil){
+            if (CGRectContainsPoint(pausebg.boundingBox, location)){
+                [self resumeMenu];
+            }
+        }
     }
 }
 

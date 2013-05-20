@@ -7,6 +7,8 @@
 //
 
 #import "GCHelper.h"
+#import "LeaderBoardViewController.h"
+#import "AppDelegate.h"
 
 @implementation GCHelper
 
@@ -54,15 +56,18 @@ static GCHelper *sharedHelper = nil;
 }
 
 - (void)authenticationChanged {
-    
+    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
     if ([GKLocalPlayer localPlayer].isAuthenticated && !userAuthenticated) {
         NSLog(@"Authentication changed: player authenticated.");
         userAuthenticated = TRUE;
+        NSString *displayName = [GKLocalPlayer localPlayer].alias;
+        app.playerName = displayName;
     } else if (![GKLocalPlayer localPlayer].isAuthenticated && userAuthenticated) {
         NSLog(@"Authentication changed: player not authenticated");
         userAuthenticated = FALSE;
+        NSString *displayName = @"Anonymous User";
+        app.playerName = displayName;
     }
-    
 }
 
 - (void)findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers
@@ -267,6 +272,12 @@ static GCHelper *sharedHelper = nil;
             }
         }];
     }
+}
+
+- (void)getCustomLeaderBoard
+{
+    LeaderBoardViewController *l = [[LeaderBoardViewController alloc]initWithNibName:@"LeaderBoardViewController" bundle:nil];
+    [self presentViewController:l];
 }
 
 -(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController

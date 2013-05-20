@@ -33,6 +33,7 @@
 
 + (GCHelper *)sharedInstance;
 - (void)authenticateLocalUser;
+- (void)getCustomLeaderBoard;
 - (void)retrieveTopTenScores;
 - (void) showLeaderboard: (NSString*) leaderboardID;
 - (void) reportScore: (int64_t) score forLeaderboardID: (NSString*) category;

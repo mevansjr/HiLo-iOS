@@ -14,6 +14,7 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "UIBorderLabel.h"
 
+
 @interface LeaderBoardViewController ()
 
 @end
@@ -134,38 +135,26 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-
+    winsize = CGRectMake(0, 0, [[UIScreen mainScreen]bounds].size.width, [[UIScreen mainScreen]bounds].size.height);
     [self setupStrings];
     [self setTitle:@"Game"];
-    scoresArray = [[NSArray alloc]init];
-    if(![self connected])
-    {
-        UIAlertView *a =[[UIAlertView alloc]initWithTitle:@"Alert" message:@"Internet Connection Problem!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
-        [a show];
-        
-        NSLog(@"Not Connected to internet");
+    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *t = [defaults objectForKey:@"scoresArray"];
+    if (t.count > 0){
+        scoresArray = [[NSMutableArray alloc]initWithArray:t];
     } else {
-        @try {
-            PFQuery *query = [PFQuery queryWithClassName:@"SavedScore"];
-            [query addDescendingOrder:@"score"];
-            [query setLimit:10];
-            scoresArray = [query findObjects];
-            [scoresTable reloadData];
-        }
-        @catch (NSException *exception) {
-            NSLog(@"%@",exception);
-        }
+        scoresArray = [[NSMutableArray alloc]initWithArray:app.scoresArray];
     }
+    [scoresArray sortUsingSelector:@selector(compare:)];
+    NSSortDescriptor *sortOrder = [NSSortDescriptor sortDescriptorWithKey: @"self" ascending: NO];
+    [scoresArray sortUsingDescriptors:[NSArray arrayWithObject: sortOrder]];
 }
 
 -(void)refresh
 {
     [self performSelector:@selector(stopLoading) withObject:nil afterDelay:2.0];
     @try {
-        PFQuery *query = [PFQuery queryWithClassName:@"SavedScore"];
-        [query addDescendingOrder:@"score"];
-        [query setLimit:10];
-        scoresArray = [query findObjects];
         [scoresTable reloadData];
     }
     @catch (NSException *exception) {
@@ -217,43 +206,23 @@
     // Dispose of any resources that can be recreated.
 }
 
-//- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    if (section == 0)
-//    {
-//        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,tableView.frame.size.width,30)];
-//        
-//        UIBorderLabel *headerLabel= [[UIBorderLabel alloc]initWithFrame:CGRectMake(0, 0, headerView.frame.size.width, headerView.frame.size.height)];
-//        headerLabel.topInset = 10;
-//        headerLabel.leftInset = 15;
-//        headerLabel.bottomInset = 12;
-//        headerLabel.rightInset = 15;
-//        headerLabel.text = @"Top 10 Scores";
-//        headerLabel.textColor = [UIColor blackColor];
-//        headerLabel.shadowOffset = CGSizeMake(0, -1);
-//        headerLabel.shadowColor = [UIColor whiteColor];
-//        headerLabel.font = [UIFont fontWithName:@"GillSans-Bold" size:16];
-//        headerLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"headerbg.png"]];
-//        [headerView addSubview:headerLabel];
-//        
-//        return headerView;
-//    }
-//    
-//    return nil;
-//}
-
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     if (section == 0)
     {
-        return @"Top 10 Scores";
+        NSString *s = @"Top Scores";
+        UILabel *l = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 300, 14)];
+        [l setFont:[UIFont fontWithName:@"CourierNewPS-BoldMT" size:8]];
+        [l setTextColor:[UIColor whiteColor]];
+        l.text = s;
+        return l.text;
     }
     return nil;
 }
 
 - (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 30;
+    return 25;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -272,46 +241,28 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
-//    [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
-//    if (cell != nil)
-//    {
-//        @try {
-//            PFObject *obj = [scoresArray objectAtIndex:indexPath.row];
-//            NSString *detail = [obj objectForKey:@"playerName"];
-//            NSNumber *status = [obj objectForKey:@"score"];
-//            NSString *d = [[NSString alloc]initWithFormat:@"%d -  %@",indexPath.row+1,detail];
-//            
-//            if (detail != nil)
-//            {
-//                cell.textLabel.text = d;
-//            }
-//            if (status != nil)
-//            {
-//                cell.detailTextLabel.text = status.stringValue;
-//            }
-//        }
-//        @catch (NSException *exception) {
-//            NSLog(@"%@",exception);
-//        }
-//    }
-    NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"CustomCell" owner:self options:nil];
-    CustomCell *cell = (CustomCell *)[nib objectAtIndex:0];
+    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
+    UIView *cellbg = [[UIView alloc]initWithFrame:CGRectMake(0, 0, winsize.size.width, 35)];
+    [cellbg setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"tablecell.png"]]];
+    [cell setBackgroundView:cellbg];
     if (cell != nil)
     {
+        AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
         @try {
-            PFObject *obj = [scoresArray objectAtIndex:indexPath.row];
-            NSString *detail = [obj objectForKey:@"playerName"];
-            NSNumber *status = [obj objectForKey:@"score"];
-            NSString *d = [[NSString alloc]initWithFormat:@"%d -  %@",indexPath.row+1,detail];
+            NSString *score = [NSString stringWithFormat:@"%@",[scoresArray objectAtIndex:indexPath.row]];
+            NSString *detail = app.playerName;
             
             if (detail != nil)
             {
-                cell.sourceLabel.text = d;
+                cell.textLabel.text = detail;
+                [cell.textLabel setBackgroundColor:[UIColor clearColor]];
             }
-            if (status != nil)
+            if (score != nil)
             {
-                cell.statusLabel.text = status.stringValue;
+                cell.detailTextLabel.text = score;
+                [cell.detailTextLabel setBackgroundColor:[UIColor clearColor]];
+                [cell.detailTextLabel setTextColor:[UIColor redColor]];
             }
         }
         @catch (NSException *exception) {
@@ -324,7 +275,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 50.0f;
+    return 35.0f;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

@@ -12,6 +12,7 @@
 
 @interface LeaderBoardViewController : UIViewController <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UINavigationBarDelegate>
 {
+    CGRect winsize;
     SystemSoundID end;
     IBOutlet UINavigationItem *navItem;
     IBOutlet UINavigationBar *thenavbar;
@@ -22,7 +23,7 @@
     IBOutlet UITableView *scoresTable;
     UIActionSheet *popquery;
     NSString *passStr;
-    NSArray *scoresArray;
+    NSMutableArray *scoresArray;
     UIView *refreshHeaderView;
     UILabel *refreshLabel;
     UIImageView *refreshArrow;

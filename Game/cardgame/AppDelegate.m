@@ -15,10 +15,20 @@
 
 @implementation AppController
 
-@synthesize window=window_, navController=navController_, director=director_, viewController;
+@synthesize window=window_, navController=navController_, director=director_, viewController, playerName, scoresArray;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [Parse setApplicationId:@"TV0LogF1hor9F1qYLuebpXrg3NmKc3toqKbGCQPk" clientKey:@"ATRiIp53CNmfsSkmhy0ppudpv8jim3fkVTqQVn2C"];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *t = [defaults objectForKey:@"scoresArray"];
+    if (t.count > 0){
+        scoresArray = [[NSMutableArray alloc]initWithArray:t];
+    } else {
+        scoresArray = [[NSMutableArray alloc]init];
+    }
+    
 	// Create the main window
 	window_ = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 

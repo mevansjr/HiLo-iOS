@@ -10,9 +10,9 @@
 #import "GameLayer.h"
 #import "SimpleAudioEngine.h"
 #import "LeaderBoardViewController.h"
-#import "CCUIViewWrapper.h"
 #import "AppDelegate.h"
 #import "RootViewController.h"
+#import "CreditsLayer.h"
 
 static const int kScrollSpeed = 2;
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
@@ -31,9 +31,11 @@ static const int kScrollSpeed = 2;
 {
     [super onEnter];
     
+    scoresArray = [[NSArray alloc]init];
+    
     //LOAD BACKGROUND MUSIC
-    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"music.wav" loop:YES];
-    [[SimpleAudioEngine sharedEngine] preloadEffect:@"music.wav"];
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"musicloop.wav" loop:YES];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"musicloop.wav"];
 }
 
 -(void) onExit
@@ -51,6 +53,7 @@ static const int kScrollSpeed = 2;
     {
         self.isTouchEnabled = YES;
         
+        //GAME KIT -- RETRIEVE TOP TEN FOR LEADERBOARD
         [[GCHelper sharedInstance] retrieveTopTenScores];
         
         //WIN SIZE
@@ -93,7 +96,7 @@ static const int kScrollSpeed = 2;
         CCMenuItemSprite *startGameImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"startgame.png"] selectedSprite:[CCSprite spriteWithFile:@"startgameOn.png"] target:self selector:@selector(buttonAction:)];
         CCMenuItemSprite *leaderboardImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"leaderboard.png"] selectedSprite:[CCSprite spriteWithFile:@"leaderboardOn.png"] target:self selector:@selector(leaderBoardAction:)];
         CCMenuItemSprite *howToImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"howto.png"] selectedSprite:[CCSprite spriteWithFile:@"howtoOn.png"] target:self selector:@selector(buttonAction:)];
-        CCMenuItemSprite *settingsImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"settings.png"] selectedSprite:[CCSprite spriteWithFile:@"settingsOn.png"] target:self selector:@selector(buttonAction:)];
+        CCMenuItemSprite *settingsImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"credits.png"] selectedSprite:[CCSprite spriteWithFile:@"creditsOn.png"] target:self selector:@selector(gameCredits)];
         
         //CREATE MENU
         if (IS_IPHONE_5) {
@@ -114,6 +117,12 @@ static const int kScrollSpeed = 2;
 //    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
     
     return self;
+}
+
+- (void)gameCredits
+{
+    [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[CreditsLayer scene] withColor:ccWHITE]];
+
 }
 
 -(void)update:(ccTime)delta
@@ -140,7 +149,22 @@ static const int kScrollSpeed = 2;
 - (void)leaderBoardAction:(id)sender
 {
     //AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
-    [[GCHelper sharedInstance] showLeaderboard:@"highscore"];
+    //[[GCHelper sharedInstance] showLeaderboard:@"highscore"];
+    //[[GCHelper sharedInstance] getCustomLeaderBoard];
+    UIAlertView *prompt = [[UIAlertView alloc]initWithTitle:@"Choose Leaderboard.." message:@"Which Leaderboad do you want to see?" delegate:self cancelButtonTitle:@"None" otherButtonTitles:@"Game Center", @"My Leaderboard", nil];
+    [prompt show];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    NSLog(@"BUTTON CLICKED: %d", buttonIndex);
+    if (buttonIndex == 1){
+        [[GCHelper sharedInstance] showLeaderboard:@"highscore"];
+    } else if (buttonIndex == 2){
+        [[GCHelper sharedInstance] getCustomLeaderBoard];
+    } else {
+        NSLog(@"CANCELED");
+    }
 }
 
 - (void)buttonAction:(id)sender

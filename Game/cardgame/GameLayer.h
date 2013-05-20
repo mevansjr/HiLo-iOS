@@ -9,6 +9,7 @@
 
 #import <GameKit/GameKit.h>
 #import "cocos2d.h"
+#import "GCHelper.h"
 
 @interface GameLayer : CCLayer <CCStandardTouchDelegate, UIGestureRecognizerDelegate>
 {
@@ -26,12 +27,16 @@
     CCSprite *selSprite;
     CGPoint location;
     NSMutableArray *cardType;
+    CCMenu *pausemenu;
+    CCMenu *resumemenu;
     CCLabelTTF *scoreLabel;
     CCLabelTTF *scoreLabels;
     CCLabelTTF *betLabel;
     CCLabelTTF *betLabels;
     CCSprite *showAnte;
     CCSprite *showAnteSpot;
+    CCSprite *pausebg;
+    NSMutableArray *scoresArray;
     UISwipeGestureRecognizer * _swipeUpRecognizer;
     UISwipeGestureRecognizer * _swipeDownRecognizer;
 }

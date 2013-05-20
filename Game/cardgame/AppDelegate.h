@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "cocos2d.h"
+#import <Parse/Parse.h>
 
 @class RootViewController;
 @interface AppController : NSObject <UIApplicationDelegate, CCDirectorDelegate>
@@ -22,5 +23,7 @@
 @property (readonly) UINavigationController *navController;
 @property (readonly) CCDirectorIOS *director;
 @property (nonatomic, retain) RootViewController *viewController;
+@property (nonatomic, retain) NSString *playerName;
+@property (nonatomic, retain) NSMutableArray *scoresArray;
 
 @end

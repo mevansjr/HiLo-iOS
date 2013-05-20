@@ -14,6 +14,7 @@
 @interface IntroLayer : CCLayer
 {
     CCSprite *background;
+    CCSpriteBatchNode *spriteSheet;
 }
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
