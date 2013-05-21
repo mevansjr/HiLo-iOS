@@ -32,11 +32,34 @@
 	return scene;
 }
 
+-(void) onExit
+{
+    [super onExit];
+    
+    //UNLOAD CACHED SOUNDS
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"coin.mp3"];
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"wrong.wav"];
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"end.mp3"];
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"add_chips.mp3"];
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"shuffle.mp3"];
+    
+    //UNLOAD GESTURE RECOGNIZERS
+    NSArray *grs = [[[CCDirector sharedDirector] view] gestureRecognizers];
+    
+    for (UIGestureRecognizer *gesture in grs){
+        if([gesture isKindOfClass:[UIGestureRecognizer class]]){
+            [[[CCDirector sharedDirector] view] removeGestureRecognizer:gesture];
+        }
+    }
+}
+
 -(id) init
 {
 	if( (self=[super init]) ) {
         self.isTouchEnabled = YES;
         
+        
+        //LOAD SAVED LOCAL LEADERBOARD DATA
         AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSMutableArray *t = [defaults objectForKey:@"scoresArray"];
@@ -48,6 +71,13 @@
         
         //WIN SIZE
         size = [[CCDirector sharedDirector] winSize];
+        
+        //CACHE SOUNDS
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"coin.mp3"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"wrong.wav"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"end.mp3"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"add_chips.mp3"];
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"shuffle.mp3"];
         
         //MENU BACKGROUND
         if (IS_IPHONE_5) {
@@ -131,7 +161,7 @@
         CCMenuItemSprite *hi = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"higherButton.png"] selectedSprite:[CCSprite spriteWithFile:@"higherButtonOn.png"] target:self selector:@selector(higher)];
         CCMenuItemSprite *lo = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"lowerButton.png"] selectedSprite:[CCSprite spriteWithFile:@"lowerButtonOn.png"] target:self selector:@selector(lower)];
         CCMenuItemSprite *clear = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"clear.png"] selectedSprite:[CCSprite spriteWithFile:@"clearOn.png"] target:self selector:@selector(resetBet)];
-        CCMenu *menu = [CCMenu menuWithItems:closeImage, hi, lo, clear, nil];
+        menu = [CCMenu menuWithItems:closeImage, hi, lo, clear, nil];
         if (IS_IPHONE_5) {
             [menu setPosition:ccp(-68+size.width/1, size.height/2)];
         } else {
@@ -144,7 +174,7 @@
         CCMenuItemSprite *five = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"chip5.png"] selectedSprite:[CCSprite spriteWithFile:@"chip5.png"] target:self selector:@selector(runFive)];
         CCMenuItemSprite *twentyfive = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"chip25.png"] selectedSprite:[CCSprite spriteWithFile:@"chip25.png"] target:self selector:@selector(runTwentyFive)];
         CCMenuItemSprite *onehundred = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"chip100.png"] selectedSprite:[CCSprite spriteWithFile:@"chip100.png"] target:self selector:@selector(runOneHundred)];
-        CCMenu *coin_menu = [CCMenu menuWithItems:onehundred, twentyfive, five, nil];
+        coin_menu = [CCMenu menuWithItems:onehundred, twentyfive, five, nil];
         if (IS_IPHONE_5) {
             [coin_menu setPosition:ccp(-225+size.width/2, -40+size.height/2)];
         } else {
@@ -154,6 +184,10 @@
         [self addChild:coin_menu z:1];
         
         [self randomCards];
+        soundFlag = FALSE;
+        pauseFlag = FALSE;
+        [self schedule:@selector(update:)];
+        [self schedule:@selector(collision:)];
 	}
 	return self;
 }
@@ -175,7 +209,7 @@
     
     [self removeChild:pausemenu cleanup:TRUE];
     //ADD RESUME MENU
-    CCMenuItemSprite *resumeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"resume.png"] selectedSprite:[CCSprite spriteWithFile:@"resume.png"] target:self selector:@selector(resumeMenu)];
+    CCMenuItemSprite *resumeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"resume.png"] selectedSprite:[CCSprite spriteWithFile:@"resume.png"] target:self selector:@selector(resumePlayCall)];
     resumemenu = [CCMenu menuWithItems:resumeImage, nil];
     if (IS_IPHONE_5) {
         [resumemenu setPosition:ccp(245+size.width/2, -20+size.height/1)];
@@ -183,11 +217,28 @@
         [resumemenu setPosition:ccp(215+size.width/2, -20+size.height/1)];
     }
     [self addChild:resumemenu z:1];
+    
+    pauseFlag = TRUE;
+    coin_menu.isTouchEnabled = FALSE;
+    menu.isTouchEnabled = FALSE;
 }
 
 -(void)removePauseMenuBg
 {
     [pausebg setVisible:FALSE];
+    pauseFlag = FALSE;
+    coin_menu.isTouchEnabled = TRUE;
+    menu.isTouchEnabled = TRUE;
+    [[CCDirector sharedDirector] resume];
+}
+
+-(void)resumePlayCall
+{
+    pauseFlag = FALSE;
+    coin_menu.isTouchEnabled = TRUE;
+    menu.isTouchEnabled = TRUE;
+    [[CCDirector sharedDirector] resume];
+    [self resumeMenu];
 }
 
 -(void)resumeMenu
@@ -203,7 +254,6 @@
         [pausemenu setPosition:ccp(215+size.width/2, -20+size.height/1)];
     }
     [self addChild:pausemenu z:1];
-    
 }
 
 - (BOOL)connected
@@ -317,17 +367,6 @@
      NSLog(@"SWIPED DOWN -- Lower");
 }
 
--(void)onExit
-{
-    NSArray *grs = [[[CCDirector sharedDirector] view] gestureRecognizers];
-    
-    for (UIGestureRecognizer *gesture in grs){
-        if([gesture isKindOfClass:[UIGestureRecognizer class]]){
-            [[[CCDirector sharedDirector] view] removeGestureRecognizer:gesture];
-        }
-    }
-}
-
 -(void)removeSprite:(CCSprite*)sprite
 {
     [sprite setPosition:CGPointMake(-1000, -1000)];
@@ -347,83 +386,81 @@
 
 -(void)update:(ccTime)delta
 {
+    //DETECT PAUSE FLAG
+    if (pauseFlag == TRUE)
+    {
+        coin_menu.isTouchEnabled = FALSE;
+        menu.isTouchEnabled = FALSE;
+        [[CCDirector sharedDirector] pause];
+    } else {
+        [[CCDirector sharedDirector] resume];
+    }
+}
+
+-(void)collision:(ccTime)delta
+{
+    //UNSCHEDULE FUNCTION
+    if (soundFlag == TRUE)
+    {
+        [self unschedule:@selector(collision:)];
+    }
+    
     //COLLISION DETECTION
-    NSLog(@"COLLISION CHECK RAN");
     if (CGRectContainsPoint(showAnteSpot.boundingBox, showAnte.position))
     {
         if (CGRectIntersectsRect(showAnteSpot.boundingBox, showAnte.boundingBox)) {
             NSLog(@"TOUCHED ON ANTE SPOT");
-            if (moneyflag == 0)
-            {
-                NSLog(@"FLAG NOT SET");
-            } else if (moneyflag == 1) {
-                [self performSelector:@selector(callFive) withObject:nil afterDelay:2.0];
-                NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
-            } else if (moneyflag == 2) {
-                [self performSelector:@selector(callTwentyFive) withObject:nil afterDelay:2.0];
-                NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
-            } else if (moneyflag == 3) {
-                [self performSelector:@selector(callOneHundred) withObject:nil afterDelay:2.0];
-                NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
-            } else {
-                NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
-            }
+            [[SimpleAudioEngine sharedEngine] playEffect:@"add_chips.mp3"];
+            soundFlag = TRUE;
         }
-    } else {
-        NSLog(@"COLLISION DID NOT OCCUR -- REMOVE CHIP");
-        [self performSelector:@selector(removeHchip:) withObject:showAnte afterDelay:3.2];
     }
 }
 
 - (void)runFive
 {
-    showAnte = [CCSprite spriteWithFile:@"chip5.png"];
+    hChip = [CCSprite spriteWithFile:@"chip_h.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+35+size.width/2, -81+size.height/2)];
+        [hChip setPosition:ccp(-226+size.width/2, -81+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+35+size.width/2, -101+size.height/2)];
+        [hChip setPosition:ccp(-196+size.width/2, -101+size.height/2)];
     }
-    [self addChild:showAnte];
+    [self addChild:hChip];
     moneyflag = 1;
-    
-    //RUN COLLISION CHECK
-    [self scheduleOnce:@selector(update:) delay:3.2];
+    [self performSelector:@selector(removeHchip:) withObject:hChip afterDelay:2];
 }
 
 - (void)runTwentyFive
 {
-    showAnte = [CCSprite spriteWithFile:@"chip25.png"];
+    hChip = [CCSprite spriteWithFile:@"chip_h.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+35+size.width/2, -39+size.height/2)];
+        [hChip setPosition:ccp(-226+size.width/2, -39+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+35+size.width/2, -59+size.height/2)];
+        [hChip setPosition:ccp(-196+size.width/2, -59+size.height/2)];
     }
-    [self addChild:showAnte];
+    [self addChild:hChip];
     moneyflag = 2;
-    
-    //RUN COLLISION CHECK
-    [self scheduleOnce:@selector(update:) delay:3.2];
+    [self performSelector:@selector(removeHchip:) withObject:hChip afterDelay:2];
 }
 
 - (void)runOneHundred
 {
-    showAnte = [CCSprite spriteWithFile:@"chip100.png"];
+    hChip = [CCSprite spriteWithFile:@"chip_h.png"];
     if (IS_IPHONE_5) {
-        [showAnte setPosition:ccp(-226+35+size.width/2, 3+size.height/2)];
+        [hChip setPosition:ccp(-226+size.width/2, 3+size.height/2)];
     } else {
-        [showAnte setPosition:ccp(-196+35+size.width/2, -17+size.height/2)];
+        [hChip setPosition:ccp(-196+size.width/2, -17+size.height/2)];
     }
-    [self addChild:showAnte];
+    [self addChild:hChip];
     moneyflag = 3;
-    
-    //RUN COLLISION CHECK
-    [self scheduleOnce:@selector(update:) delay:3.2];
+    [self performSelector:@selector(removeHchip:) withObject:hChip afterDelay:2];
 }
 
 - (void)removeHchip:(CCSprite *)sprite
 
 {
-    [sprite removeFromParentAndCleanup:true];
+    if (sprite != nil){
+        [sprite removeFromParentAndCleanup:true];
+    }
 }
 
 - (void)callFive
@@ -466,6 +503,15 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
+    } else {
+        showAnte = [CCSprite spriteWithFile:@"chip5.png"];
+        if (IS_IPHONE_5) {
+            [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
+        } else {
+            [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
+        }
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [self addChild:showAnte];
     }
 }
 
@@ -509,6 +555,15 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
+    } else {
+        showAnte = [CCSprite spriteWithFile:@"chip25.png"];
+        if (IS_IPHONE_5) {
+            [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
+        } else {
+            [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
+        }
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [self addChild:showAnte];
     }
 }
 
@@ -552,6 +607,15 @@
         showAnteSpot = [CCSprite spriteWithFile:@"bet.png"];
         [showAnteSpot setPosition:ccp(3+anteSpot.x, anteSpot.y)];
         [self addChild:showAnteSpot];
+    } else {
+        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
+        if (IS_IPHONE_5) {
+            [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
+        } else {
+            [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
+        }
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [self addChild:showAnte];
     }
 }
 
@@ -584,6 +648,14 @@
         realTotal = realTotal + pass;
         [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
     }
+    
+    if (realTotal >= 5000)
+    {
+        NSLog(@"WINNER - GAME OVER");
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"WINNER" message:@"YOU WON!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 
 - (void)removePoints:(int)pass
@@ -599,7 +671,7 @@
     {
         NSLog(@"GAME OVER");
         [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"GAME OVER!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"LOSER" message:@"GAME OVER!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
 }
@@ -636,6 +708,7 @@
     }
     [self addChild:playerCard];
     [playerCard runAction:[CCRotateBy actionWithDuration:.4 angle:360]];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"shuffle.mp3"];
 }
 
 - (void)higher
@@ -709,7 +782,7 @@
         if (dealerInt == playerInt) {
             NSLog(@"DRAW");
             //[self drawPoints];
-            [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
+            [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.mp3"];
         } else if (dealerInt < playerInt) {
             NSLog(@"PLAYER WINS");
             [self addPoints:passValue];
@@ -763,7 +836,45 @@
         
         if (pausebg != nil){
             if (CGRectContainsPoint(pausebg.boundingBox, location)){
+                pauseFlag = FALSE;
+                coin_menu.isTouchEnabled = TRUE;
+                menu.isTouchEnabled = TRUE;
+                [[CCDirector sharedDirector] resume];
                 [self resumeMenu];
+            }
+        }
+        
+        //TOUCH POINT -- ANTE SPOT
+        if (showAnteSpot != nil) {
+            CGRect showAnteRect = CGRectMake(showAnteSpot.boundingBox.origin.x, showAnteSpot.boundingBox.origin.y, showAnteSpot.boundingBox.size.width, showAnteSpot.boundingBox.size.height);
+            
+            CGRect *checkForAnte = CGRectContainsPoint(showAnteRect,location);
+            if (checkForAnte)
+            {
+                if (moneyflag == 0)
+                {
+                    NSLog(@"FLAG NOT SET");
+                } else if (moneyflag == 1) {
+                    [self callFive];
+                    soundFlag = FALSE;
+                    [self schedule:@selector(collision:)];
+                    NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
+                } else if (moneyflag == 2) {
+                    [self callTwentyFive];
+                    soundFlag = FALSE;
+                    [self schedule:@selector(collision:)];
+                    NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
+                } else if (moneyflag == 3) {
+                    [self callOneHundred];
+                    soundFlag = FALSE;
+                    [self schedule:@selector(collision:)];
+                    NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
+                } else {
+                    NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                }
+            } else {
+                NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
+                
             }
         }
     }

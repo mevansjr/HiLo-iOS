@@ -280,6 +280,20 @@ static GCHelper *sharedHelper = nil;
     [self presentViewController:l];
 }
 
+- (void)playTutorial
+{
+    NSString *movieFile = [[NSBundle mainBundle] pathForResource:@"tutorial_video" ofType:@"mov"];
+    NSURL *videoURL = [[NSURL alloc] initFileURLWithPath:movieFile];
+    MPMoviePlayerViewController *player = [[MPMoviePlayerViewController alloc]initWithContentURL:videoURL];
+    [player.view setBounds:[self getRootViewController].view.bounds];
+    [player.view setBackgroundColor:[UIColor whiteColor]];
+    [player.moviePlayer prepareToPlay];
+    [player.moviePlayer setFullscreen:YES animated:YES];
+    [player.moviePlayer setShouldAutoplay:YES];
+    [player.moviePlayer setMovieSourceType:MPMovieSourceTypeFile];
+    [self presentViewController:player];
+}
+
 -(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController
 {
     [self dismissModalViewController];

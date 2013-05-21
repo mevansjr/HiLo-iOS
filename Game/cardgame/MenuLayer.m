@@ -35,7 +35,6 @@ static const int kScrollSpeed = 2;
     
     //LOAD BACKGROUND MUSIC
     [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"musicloop.wav" loop:YES];
-    [[SimpleAudioEngine sharedEngine] preloadEffect:@"musicloop.wav"];
 }
 
 -(void) onExit
@@ -44,7 +43,6 @@ static const int kScrollSpeed = 2;
     
     //UNLOAD BACKGROUND MUSIC
     [[SimpleAudioEngine sharedEngine] stopBackgroundMusic];
-    [[SimpleAudioEngine sharedEngine] unloadEffect:@"musicloop.wav"];
 }
 
 -(id)init
@@ -95,7 +93,7 @@ static const int kScrollSpeed = 2;
         //CREATE BUTTONS
         CCMenuItemSprite *startGameImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"startgame.png"] selectedSprite:[CCSprite spriteWithFile:@"startgameOn.png"] target:self selector:@selector(buttonAction:)];
         CCMenuItemSprite *leaderboardImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"leaderboard.png"] selectedSprite:[CCSprite spriteWithFile:@"leaderboardOn.png"] target:self selector:@selector(leaderBoardAction:)];
-        CCMenuItemSprite *howToImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"howto.png"] selectedSprite:[CCSprite spriteWithFile:@"howtoOn.png"] target:self selector:@selector(buttonAction:)];
+        CCMenuItemSprite *howToImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"howto.png"] selectedSprite:[CCSprite spriteWithFile:@"howtoOn.png"] target:self selector:@selector(howToAction:)];
         CCMenuItemSprite *settingsImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"credits.png"] selectedSprite:[CCSprite spriteWithFile:@"creditsOn.png"] target:self selector:@selector(gameCredits)];
         
         //CREATE MENU
@@ -112,11 +110,22 @@ static const int kScrollSpeed = 2;
         }
         
         [self scheduleUpdate];
+        
+//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//        scoresArray = [[NSMutableArray alloc]init];
+//        [defaults setObject:scoresArray forKey:@"scoresArray"];
+//        [defaults synchronize];
     }
 //    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
 //    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
     
     return self;
+}
+
+- (void)howToAction:(id)sender
+{
+    [[SimpleAudioEngine sharedEngine] stopBackgroundMusic];
+    [[GCHelper sharedInstance] playTutorial];
 }
 
 - (void)gameCredits
@@ -150,9 +159,9 @@ static const int kScrollSpeed = 2;
 {
     //AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
     //[[GCHelper sharedInstance] showLeaderboard:@"highscore"];
-    //[[GCHelper sharedInstance] getCustomLeaderBoard];
-    UIAlertView *prompt = [[UIAlertView alloc]initWithTitle:@"Choose Leaderboard.." message:@"Which Leaderboad do you want to see?" delegate:self cancelButtonTitle:@"None" otherButtonTitles:@"Game Center", @"My Leaderboard", nil];
-    [prompt show];
+    [[GCHelper sharedInstance] getCustomLeaderBoard];
+//    UIAlertView *prompt = [[UIAlertView alloc]initWithTitle:@"Choose Leaderboard.." message:@"Which Leaderboad do you want to see?" delegate:self cancelButtonTitle:@"None" otherButtonTitles:@"Game Center", @"My Leaderboard", nil];
+//    [prompt show];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -215,6 +224,11 @@ static const int kScrollSpeed = 2;
 - (void)onLeaderboardViewDismissed
 {
     CCLOG(@"Leaderboard Dismissed");
+}
+
+-(void)tutorialVideoDismissed
+{
+    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"musicloop.wav" loop:YES];
 }
 
 @end

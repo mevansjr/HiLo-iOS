@@ -25,11 +25,13 @@
 -(void) onEnter
 {
     [super onEnter];
+    [[SimpleAudioEngine sharedEngine] preloadEffect:@"clapping.mp3"];
 }
 
 -(void) onExit
 {
     [super onExit];
+    [[SimpleAudioEngine sharedEngine] unloadEffect:@"clapping.mp3"];
 }
 
 -(id) init
@@ -73,7 +75,7 @@
 - (void)playEffect
 {
     //LOAD EFFECT
-    [[SimpleAudioEngine sharedEngine] playEffect:@"end.mp3"];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"clapping.mp3"];
 }
 
 - (void)buttonAction:(id)sender

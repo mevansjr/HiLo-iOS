@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <GameKit/GameKit.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @protocol GCHelperDelegate
 - (void)matchStarted;
@@ -16,7 +17,7 @@
 - (void)onLeaderboardViewDismissed;
 @end
 
-@interface GCHelper : NSObject <GKMatchmakerViewControllerDelegate, GKMatchDelegate, GKGameCenterControllerDelegate, GKLeaderboardViewControllerDelegate> {
+@interface GCHelper : NSObject <GKMatchmakerViewControllerDelegate, GKMatchDelegate, GKGameCenterControllerDelegate, GKLeaderboardViewControllerDelegate, MPMediaPickerControllerDelegate> {
     BOOL gameCenterAvailable;
     BOOL userAuthenticated;
     
@@ -35,6 +36,7 @@
 - (void)authenticateLocalUser;
 - (void)getCustomLeaderBoard;
 - (void)retrieveTopTenScores;
+- (void)playTutorial;
 - (void) showLeaderboard: (NSString*) leaderboardID;
 - (void) reportScore: (int64_t) score forLeaderboardID: (NSString*) category;
 - (void)findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers viewController:(UIViewController *)viewController delegate:(id<GCHelperDelegate>)theDelegate;

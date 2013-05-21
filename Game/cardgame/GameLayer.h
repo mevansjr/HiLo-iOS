@@ -22,6 +22,8 @@
     int passValue;
     int maxBet;
     int moneyflag;
+    BOOL soundFlag;
+    BOOL pauseFlag;
     CCSprite *background;
     CGPoint anteSpot;
     CCSprite *selSprite;
@@ -29,12 +31,15 @@
     NSMutableArray *cardType;
     CCMenu *pausemenu;
     CCMenu *resumemenu;
+    CCMenu *coin_menu;
+    CCMenu *menu;
     CCLabelTTF *scoreLabel;
     CCLabelTTF *scoreLabels;
     CCLabelTTF *betLabel;
     CCLabelTTF *betLabels;
     CCSprite *showAnte;
     CCSprite *showAnteSpot;
+    CCSprite *hChip;
     CCSprite *pausebg;
     NSMutableArray *scoresArray;
     UISwipeGestureRecognizer * _swipeUpRecognizer;
@@ -44,5 +49,6 @@
 @property (retain) UISwipeGestureRecognizer * swipeDownRecognizer;
 +(CCScene *) scene;
 -(void)update:(ccTime)delta;
+-(void)collision:(ccTime)delta;
 
 @end

@@ -10,6 +10,7 @@
 // Import the interfaces
 #import "IntroLayer.h"
 #import "MenuLayer.h"
+#import "SimpleAudioEngine.h"
 
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
 #pragma mark - IntroLayer
@@ -37,6 +38,9 @@
 -(void) onEnter
 {
 	[super onEnter];
+    
+    //LOAD BACKGROUND MUSIC
+    [[SimpleAudioEngine sharedEngine] playEffect:@"startup2.wav" ];
 
     //WIN SIZE
 	CGSize size = [[CCDirector sharedDirector] winSize];
@@ -94,11 +98,12 @@
     }
 	
 	// In one second transition to the new scene
-	[self scheduleOnce:@selector(makeTransition:) delay:1.5];
+	[self scheduleOnce:@selector(makeTransition:) delay:1];
 }
 
 -(void) makeTransition:(ccTime)dt
 {
+    [[SimpleAudioEngine sharedEngine] stopEffect:@"startup2.wav"];
 	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
 }
 @end

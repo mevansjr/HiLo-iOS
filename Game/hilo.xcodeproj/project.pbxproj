@@ -258,6 +258,12 @@
 		5DBB0ED9173D738D00109C11 /* GKMatchmakerViewController-LandscapeOnly.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBB0ED8173D738D00109C11 /* GKMatchmakerViewController-LandscapeOnly.m */; };
 		5DBCD1C71741213A00012B5F /* bet.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBCD1C51741213A00012B5F /* bet.png */; };
 		5DBCD1C81741213A00012B5F /* bet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBCD1C61741213A00012B5F /* bet@2x.png */; };
+		5DE91DCE174BD9F4002C8CC9 /* add_chips.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DCD174BD9F4002C8CC9 /* add_chips.mp3 */; };
+		5DE91DD0174BDC28002C8CC9 /* shuffle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DCF174BDC28002C8CC9 /* shuffle.mp3 */; };
+		5DE91DD2174BE144002C8CC9 /* tutorial_video.mov in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD1174BE144002C8CC9 /* tutorial_video.mov */; };
+		5DE91DD4174BE99F002C8CC9 /* clapping.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD3174BE99F002C8CC9 /* clapping.mp3 */; };
+		5DE91DD7174BEA34002C8CC9 /* startup.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD5174BEA34002C8CC9 /* startup.wav */; };
+		5DE91DD8174BEA34002C8CC9 /* startup2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD6174BEA34002C8CC9 /* startup2.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -658,6 +664,12 @@
 		5DBB0ED8173D738D00109C11 /* GKMatchmakerViewController-LandscapeOnly.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GKMatchmakerViewController-LandscapeOnly.m"; sourceTree = "<group>"; };
 		5DBCD1C51741213A00012B5F /* bet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bet.png; path = Resources/bet.png; sourceTree = "<group>"; };
 		5DBCD1C61741213A00012B5F /* bet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bet@2x.png"; path = "Resources/bet@2x.png"; sourceTree = "<group>"; };
+		5DE91DCD174BD9F4002C8CC9 /* add_chips.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = add_chips.mp3; path = Resources/add_chips.mp3; sourceTree = "<group>"; };
+		5DE91DCF174BDC28002C8CC9 /* shuffle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = shuffle.mp3; path = Resources/shuffle.mp3; sourceTree = "<group>"; };
+		5DE91DD1174BE144002C8CC9 /* tutorial_video.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; name = tutorial_video.mov; path = Resources/tutorial_video.mov; sourceTree = "<group>"; };
+		5DE91DD3174BE99F002C8CC9 /* clapping.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = clapping.mp3; path = Resources/clapping.mp3; sourceTree = "<group>"; };
+		5DE91DD5174BEA34002C8CC9 /* startup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = startup.wav; path = Resources/startup.wav; sourceTree = "<group>"; };
+		5DE91DD6174BEA34002C8CC9 /* startup2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = startup2.wav; path = Resources/startup2.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -665,10 +677,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D61ACB7173D4E7A00E9A100 /* MediaPlayer.framework in Frameworks */,
 				5D61ACB8173D4E8300E9A100 /* MobileCoreServices.framework in Frameworks */,
 				5D61ACC2173D507E00E9A100 /* FacebookSDK.framework in Frameworks */,
 				5D61ACC3173D507E00E9A100 /* Parse.framework in Frameworks */,
-				5D61ACB7173D4E7A00E9A100 /* MediaPlayer.framework in Frameworks */,
 				5D61ACB5173D4E6C00E9A100 /* iAd.framework in Frameworks */,
 				5D61ACB3173D4E6500E9A100 /* Accelerate.framework in Frameworks */,
 				5D61ACB1173D4E5E00E9A100 /* SystemConfiguration.framework in Frameworks */,
@@ -762,6 +774,12 @@
 		5D61AA1E173AC01800E9A100 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5DE91DD1174BE144002C8CC9 /* tutorial_video.mov */,
+				5DE91DCD174BD9F4002C8CC9 /* add_chips.mp3 */,
+				5DE91DD3174BE99F002C8CC9 /* clapping.mp3 */,
+				5DE91DD5174BEA34002C8CC9 /* startup.wav */,
+				5DE91DD6174BEA34002C8CC9 /* startup2.wav */,
+				5DE91DCF174BDC28002C8CC9 /* shuffle.mp3 */,
 				5DB9549D1744FF1200F03ECB /* music.wav */,
 				5D61ABAD173AD93900E9A100 /* end.mp3 */,
 				5D61ABAE173AD93900E9A100 /* coin.mp3 */,
@@ -1438,6 +1456,12 @@
 				5D6FE74C174A92D400160997 /* credits@2x.png in Resources */,
 				5D6FE74F174A936700160997 /* creditsOn.png in Resources */,
 				5D6FE750174A936700160997 /* creditsOn@2x.png in Resources */,
+				5DE91DCE174BD9F4002C8CC9 /* add_chips.mp3 in Resources */,
+				5DE91DD0174BDC28002C8CC9 /* shuffle.mp3 in Resources */,
+				5DE91DD2174BE144002C8CC9 /* tutorial_video.mov in Resources */,
+				5DE91DD4174BE99F002C8CC9 /* clapping.mp3 in Resources */,
+				5DE91DD7174BEA34002C8CC9 /* startup.wav in Resources */,
+				5DE91DD8174BEA34002C8CC9 /* startup2.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
