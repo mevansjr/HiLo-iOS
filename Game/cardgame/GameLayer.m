@@ -277,82 +277,6 @@
     _swipeDownRecognizer.delegate = self;
     _swipeDownRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [[CCDirector sharedDirector].view addGestureRecognizer:_swipeDownRecognizer];
-    
-    UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanFrom:)];
-    gestureRecognizer.delegate = self;
-    [[CCDirector sharedDirector].view addGestureRecognizer:gestureRecognizer];
-}
-
-- (void)selectSpriteForTouch:(CGPoint)touchLocation theSprite:(CCSprite*)sprite
-{
-    CCSprite * newSprite = nil;
-    if (CGRectContainsPoint(showAnte.boundingBox, touchLocation)) {
-        newSprite = showAnte;
-    }
-    selSprite = newSprite;
-}
-
-- (CGPoint)boundLayerPos:(CGPoint)newPos {
-    CGSize winSize = [CCDirector sharedDirector].winSize;
-    CGPoint retval = newPos;
-    retval.x = MIN(retval.x, 0);
-    retval.x = MAX(retval.x, -background.contentSize.width+winSize.width);
-    retval.y = self.position.y;
-    return retval;
-}
-
-- (void)panForTranslation:(CGPoint)translation {
-    CGPoint newPos = CGPointMake(0, 0);
-    if (selSprite) {
-        newPos = ccpAdd(selSprite.position, translation);
-        selSprite.position = newPos;
-    } else {
-        newPos = ccpAdd(self.position, translation);
-        self.position = [self boundLayerPos:newPos];
-    }
-}
-
-- (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
-    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
-    
-    CGPoint oldTouchLocation = [touch previousLocationInView:touch.view];
-    oldTouchLocation = [[CCDirector sharedDirector] convertToGL:oldTouchLocation];
-    oldTouchLocation = [self convertToNodeSpace:oldTouchLocation];
-    
-    CGPoint translation = ccpSub(touchLocation, oldTouchLocation);
-    [self panForTranslation:translation];
-}
-
-- (void)handlePanFrom:(UIPanGestureRecognizer *)recognizer {
-    
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        
-        CGPoint touchLocation = [recognizer locationInView:recognizer.view];
-        touchLocation = [[CCDirector sharedDirector] convertToGL:touchLocation];
-        touchLocation = [self convertToNodeSpace:touchLocation];
-        [self selectSpriteForTouch:touchLocation theSprite:showAnte];
-        
-    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
-        
-        CGPoint translation = [recognizer translationInView:recognizer.view];
-        translation = ccp(translation.x, -translation.y);
-        [self panForTranslation:translation];
-        [recognizer setTranslation:CGPointZero inView:recognizer.view];
-        
-    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
-        
-        if (!selSprite) {
-            float scrollDuration = 0.2;
-            CGPoint velocity = [recognizer velocityInView:recognizer.view];
-            CGPoint newPos = ccpAdd(self.position, ccpMult(velocity, scrollDuration));
-            newPos = [self boundLayerPos:newPos];
-            
-            [self stopAllActions];
-            CCMoveTo *moveTo = [CCMoveTo actionWithDuration:scrollDuration position:newPos];
-            [self runAction:[CCEaseOut actionWithAction:moveTo rate:1]];
-        }
-        
-    }
 }
 
 -(void)handleSwipeUp
@@ -877,8 +801,6 @@
     {
         location = [touch locationInView:touch.view];
         location = [[CCDirector sharedDirector]convertToGL:location];
-        
-        [self selectSpriteForTouch:location theSprite:showAnte];
         
         if (pausebg != nil){
             if (CGRectContainsPoint(pausebg.boundingBox, location)){

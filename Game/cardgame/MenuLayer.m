@@ -54,6 +54,10 @@ static const int kScrollSpeed = 2;
         //GAME KIT -- RETRIEVE TOP TEN FOR LEADERBOARD
         [[GCHelper sharedInstance] retrieveTopTenScores];
         
+        //SET USER NAME
+        AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
+        app.playerName = [[UIDevice currentDevice] name];
+        
         //WIN SIZE
         CGSize size = [[CCDirector sharedDirector] winSize];
         
