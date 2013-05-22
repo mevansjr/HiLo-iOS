@@ -264,6 +264,10 @@
 		5DE91DD4174BE99F002C8CC9 /* clapping.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD3174BE99F002C8CC9 /* clapping.mp3 */; };
 		5DE91DD7174BEA34002C8CC9 /* startup.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD5174BEA34002C8CC9 /* startup.wav */; };
 		5DE91DD8174BEA34002C8CC9 /* startup2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DD6174BEA34002C8CC9 /* startup2.wav */; };
+		5DE91DDF174CE8DB002C8CC9 /* feedback_add.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DDB174CE8DB002C8CC9 /* feedback_add.png */; };
+		5DE91DE0174CE8DB002C8CC9 /* feedback_add@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DDC174CE8DB002C8CC9 /* feedback_add@2x.png */; };
+		5DE91DE1174CE8DB002C8CC9 /* feedback_minus.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DDD174CE8DB002C8CC9 /* feedback_minus.png */; };
+		5DE91DE2174CE8DB002C8CC9 /* feedback_minus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE91DDE174CE8DB002C8CC9 /* feedback_minus@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -670,6 +674,10 @@
 		5DE91DD3174BE99F002C8CC9 /* clapping.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = clapping.mp3; path = Resources/clapping.mp3; sourceTree = "<group>"; };
 		5DE91DD5174BEA34002C8CC9 /* startup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = startup.wav; path = Resources/startup.wav; sourceTree = "<group>"; };
 		5DE91DD6174BEA34002C8CC9 /* startup2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = startup2.wav; path = Resources/startup2.wav; sourceTree = "<group>"; };
+		5DE91DDB174CE8DB002C8CC9 /* feedback_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = feedback_add.png; path = Resources/feedback_add.png; sourceTree = "<group>"; };
+		5DE91DDC174CE8DB002C8CC9 /* feedback_add@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "feedback_add@2x.png"; path = "Resources/feedback_add@2x.png"; sourceTree = "<group>"; };
+		5DE91DDD174CE8DB002C8CC9 /* feedback_minus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = feedback_minus.png; path = Resources/feedback_minus.png; sourceTree = "<group>"; };
+		5DE91DDE174CE8DB002C8CC9 /* feedback_minus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "feedback_minus@2x.png"; path = "Resources/feedback_minus@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -786,6 +794,10 @@
 				5D61ABAF173AD93900E9A100 /* tune.wav */,
 				5D61ABB0173AD93900E9A100 /* wrong.wav */,
 				5D61ABAB173AD8CE00E9A100 /* musicloop.wav */,
+				5DE91DDB174CE8DB002C8CC9 /* feedback_add.png */,
+				5DE91DDC174CE8DB002C8CC9 /* feedback_add@2x.png */,
+				5DE91DDD174CE8DB002C8CC9 /* feedback_minus.png */,
+				5DE91DDE174CE8DB002C8CC9 /* feedback_minus@2x.png */,
 				5D6FE749174A92D400160997 /* credits.png */,
 				5D6FE74A174A92D400160997 /* credits@2x.png */,
 				5D6FE74D174A936700160997 /* creditsOn.png */,
@@ -1462,6 +1474,10 @@
 				5DE91DD4174BE99F002C8CC9 /* clapping.mp3 in Resources */,
 				5DE91DD7174BEA34002C8CC9 /* startup.wav in Resources */,
 				5DE91DD8174BEA34002C8CC9 /* startup2.wav in Resources */,
+				5DE91DDF174CE8DB002C8CC9 /* feedback_add.png in Resources */,
+				5DE91DE0174CE8DB002C8CC9 /* feedback_add@2x.png in Resources */,
+				5DE91DE1174CE8DB002C8CC9 /* feedback_minus.png in Resources */,
+				5DE91DE2174CE8DB002C8CC9 /* feedback_minus@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

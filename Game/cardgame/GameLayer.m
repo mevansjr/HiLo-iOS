@@ -406,13 +406,11 @@
     }
     
     //COLLISION DETECTION
-    if (CGRectContainsPoint(showAnteSpot.boundingBox, showAnte.position))
+    if (CGRectIntersectsRect(showAnteSpot.boundingBox, showAnte.boundingBox))
     {
-        if (CGRectIntersectsRect(showAnteSpot.boundingBox, showAnte.boundingBox)) {
-            NSLog(@"TOUCHED ON ANTE SPOT");
-            [[SimpleAudioEngine sharedEngine] playEffect:@"add_chips.mp3"];
-            soundFlag = TRUE;
-        }
+        NSLog(@"TOUCHED ON ANTE SPOT");
+        [[SimpleAudioEngine sharedEngine] playEffect:@"add_chips.mp3"];
+        soundFlag = TRUE;
     }
 }
 
@@ -742,10 +740,34 @@
             NSLog(@"PLAYER WINS");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
+            
+            //FEEDBACK ADD
+            feedback_add = [CCSprite spriteWithFile:@"feedback_add.png"];
+            [feedback_add setScale:.11];
+            if (IS_IPHONE_5) {
+                [feedback_add setPosition:ccp(-185+size.width/2, 131+size.height/2)];
+            } else {
+                [feedback_add setPosition:ccp(-145+size.width/2, 131+size.height/2)];
+            }
+            [self addChild:feedback_add];
+            [feedback_add runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [self performSelector:@selector(removeHchip:) withObject:feedback_add afterDelay:2];
         } else if (playerInt > dealerInt) {
             NSLog(@"DEALER WINS");
             [self removePoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.wav"];
+            
+            //FEEDBACK MINUS
+            feedback_minus = [CCSprite spriteWithFile:@"feedback_minus.png"];
+            [feedback_minus setScale:.11];
+            if (IS_IPHONE_5) {
+                [feedback_minus setPosition:ccp(-185+size.width/2, 131+size.height/2)];
+            } else {
+                [feedback_minus setPosition:ccp(-145+size.width/2, 131+size.height/2)];
+            }
+            [self addChild:feedback_minus];
+            [feedback_minus runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [self performSelector:@selector(removeHchip:) withObject:feedback_minus afterDelay:2];
         } else {
             NSLog(@"WEIRD");
             [self addPoints:passValue];
@@ -787,10 +809,34 @@
             NSLog(@"PLAYER WINS");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
+            
+            //FEEDBACK ADD
+            feedback_add = [CCSprite spriteWithFile:@"feedback_add.png"];
+            [feedback_add setScale:.11];
+            if (IS_IPHONE_5) {
+                [feedback_add setPosition:ccp(-185+size.width/2, 131+size.height/2)];
+            } else {
+                [feedback_add setPosition:ccp(-145+size.width/2, 131+size.height/2)];
+            }
+            [self addChild:feedback_add];
+            [feedback_add runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [self performSelector:@selector(removeHchip:) withObject:feedback_add afterDelay:2];
         } else if (playerInt < dealerInt) {
             NSLog(@"DEALER WINS");
             [self removePoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.wav"];
+            
+            //FEEDBACK MINUS
+            feedback_minus = [CCSprite spriteWithFile:@"feedback_minus.png"];
+            [feedback_minus setScale:.11];
+            if (IS_IPHONE_5) {
+                [feedback_minus setPosition:ccp(-185+size.width/2, 131+size.height/2)];
+            } else {
+                [feedback_minus setPosition:ccp(-145+size.width/2, 131+size.height/2)];
+            }
+            [self addChild:feedback_minus];
+            [feedback_minus runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [self performSelector:@selector(removeHchip:) withObject:feedback_minus afterDelay:2];
         } else {
             NSLog(@"WEIRD");
             [self addPoints:passValue];

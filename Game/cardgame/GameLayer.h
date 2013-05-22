@@ -24,7 +24,10 @@
     int moneyflag;
     BOOL soundFlag;
     BOOL pauseFlag;
+    NSString* feedbackFlag;
     CCSprite *background;
+    CCSprite *feedback_minus;
+    CCSprite *feedback_add;
     CGPoint anteSpot;
     CCSprite *selSprite;
     CGPoint location;
