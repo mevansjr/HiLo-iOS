@@ -52,7 +52,7 @@ static const int kScrollSpeed = 2;
         self.isTouchEnabled = YES;
         
         //GAME KIT -- RETRIEVE TOP TEN FOR LEADERBOARD
-        [[GCHelper sharedInstance] retrieveTopTenScores];
+        //[[GCHelper sharedInstance] retrieveTopTenScores];
         
         //SET USER NAME
         AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
@@ -114,14 +114,7 @@ static const int kScrollSpeed = 2;
         }
         
         [self scheduleUpdate];
-        
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//        scoresArray = [[NSMutableArray alloc]init];
-//        [defaults setObject:scoresArray forKey:@"scoresArray"];
-//        [defaults synchronize];
     }
-//    AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
-//    [[GCHelper sharedInstance] findMatchWithMinPlayers:2 maxPlayers:2 viewController:app.viewController delegate:self];
     
     return self;
 }
@@ -161,23 +154,7 @@ static const int kScrollSpeed = 2;
 
 - (void)leaderBoardAction:(id)sender
 {
-    //AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
-    //[[GCHelper sharedInstance] showLeaderboard:@"highscore"];
     [[GCHelper sharedInstance] getCustomLeaderBoard];
-//    UIAlertView *prompt = [[UIAlertView alloc]initWithTitle:@"Choose Leaderboard.." message:@"Which Leaderboad do you want to see?" delegate:self cancelButtonTitle:@"None" otherButtonTitles:@"Game Center", @"My Leaderboard", nil];
-//    [prompt show];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    NSLog(@"BUTTON CLICKED: %d", buttonIndex);
-    if (buttonIndex == 1){
-        [[GCHelper sharedInstance] showLeaderboard:@"highscore"];
-    } else if (buttonIndex == 2){
-        [[GCHelper sharedInstance] getCustomLeaderBoard];
-    } else {
-        NSLog(@"CANCELED");
-    }
 }
 
 - (void)buttonAction:(id)sender
@@ -195,8 +172,8 @@ static const int kScrollSpeed = 2;
     for (UITouch *touch in [event allTouches])
     {
         //TOUCH LOCATION
-        CGPoint touchLocation = [touch locationInView:touch.view];
-        NSLog(@"TOUCH-> x: %f - y: %f", touchLocation.x, touchLocation.y);
+        //CGPoint touchLocation = [touch locationInView:touch.view];
+        //NSLog(@"TOUCH-> x: %f - y: %f", touchLocation.x, touchLocation.y);
     }
 }
 
@@ -214,25 +191,20 @@ static const int kScrollSpeed = 2;
 #pragma mark GCHelperDelegate
 
 - (void)matchStarted {
-    CCLOG(@"Match started");
+    //CCLOG(@"Match started");
 }
 
 - (void)matchEnded {
-    CCLOG(@"Match ended");
+    //CCLOG(@"Match ended");
 }
 
 - (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID {
-    CCLOG(@"Received data");
+    //CCLOG(@"Received data");
 }
 
 - (void)onLeaderboardViewDismissed
 {
-    CCLOG(@"Leaderboard Dismissed");
-}
-
--(void)tutorialVideoDismissed
-{
-    [[SimpleAudioEngine sharedEngine] playBackgroundMusic:@"musicloop.wav" loop:YES];
+    //CCLOG(@"Leaderboard Dismissed");
 }
 
 @end

@@ -15,6 +15,8 @@
 #import "Reachability.h"
 #import "CreditsLayer.h"
 
+//SET kChipTransition TO 0.2 FOR NORMAL OPERATION
+static const int kChipTransition = 8.2;
 #define randint(min, max) (arc4random() % ((max + 1) - min)) + min
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
 
@@ -45,7 +47,6 @@
     
     //UNLOAD GESTURE RECOGNIZERS
     NSArray *grs = [[[CCDirector sharedDirector] view] gestureRecognizers];
-    
     for (UIGestureRecognizer *gesture in grs){
         if([gesture isKindOfClass:[UIGestureRecognizer class]]){
             [[[CCDirector sharedDirector] view] removeGestureRecognizer:gesture];
@@ -57,7 +58,6 @@
 {
 	if( (self=[super init]) ) {
         self.isTouchEnabled = YES;
-        
         
         //LOAD SAVED LOCAL LEADERBOARD DATA
         AppController *app = (AppController *)[[UIApplication sharedApplication] delegate];
@@ -110,7 +110,7 @@
             [[CCSpriteFrameCache sharedSpriteFrameCache]addSpriteFramesWithFile:@"customcards_r_coords.plist" texture:tex];
         }
         
-        //GAME PREFIX VALUES
+        //GAME PREFIXED VALUES
         startOffMoney = 1500;
         realTotal = startOffMoney;
         maxBet = 1000;
@@ -282,13 +282,13 @@
 -(void)handleSwipeUp
 {
     [self higher];
-    NSLog(@"SWIPED UP -- Higher");
+    //NSLog(@"SWIPED UP -- Higher");
 }
 
 -(void)handleSwipeDown
 {
     [self lower];
-     NSLog(@"SWIPED DOWN -- Lower");
+     //NSLog(@"SWIPED DOWN -- Lower");
 }
 
 -(void)removeSprite:(CCSprite*)sprite
@@ -332,7 +332,7 @@
     //COLLISION DETECTION
     if (CGRectIntersectsRect(showAnteSpot.boundingBox, showAnte.boundingBox))
     {
-        NSLog(@"TOUCHED ON ANTE SPOT");
+        //NSLog(@"TOUCHED ON ANTE SPOT");
         [[SimpleAudioEngine sharedEngine] playEffect:@"add_chips.mp3"];
         soundFlag = TRUE;
     }
@@ -395,7 +395,7 @@
     {
         passValue = passValue + ante;
     } else {
-        NSLog(@"%i",passValue);
+        passValue = ante;
     }
     
     if (passValue <= maxBet){
@@ -408,17 +408,17 @@
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
-        NSLog(@"MAX BET REACHED");
+        //NSLog(@"MAX BET REACHED");
         passValue = 1000;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
 
     if (realTotal < passValue) {
-        NSLog(@"CAN NOT ADD BET");
+        //NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
@@ -432,7 +432,8 @@
         } else {
             [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
         }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
         [self addChild:showAnte];
     }
 }
@@ -447,7 +448,7 @@
     {
         passValue = passValue + ante;
     } else {
-        NSLog(@"%i",passValue);
+        passValue = ante;
     }
     
     if (passValue <= maxBet){
@@ -460,17 +461,17 @@
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
-        NSLog(@"MAX BET REACHED");
+        //NSLog(@"MAX BET REACHED");
         passValue = 1000;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
     
     if (realTotal < passValue) {
-        NSLog(@"CAN NOT ADD BET");
+        //NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
@@ -484,7 +485,8 @@
         } else {
             [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
         }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
         [self addChild:showAnte];
     }
 }
@@ -499,7 +501,7 @@
     {
         passValue = passValue + ante;
     } else {
-        NSLog(@"%i",passValue);
+        passValue = ante;
     }
     
     if (passValue <= maxBet){
@@ -512,17 +514,17 @@
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
-        NSLog(@"MAX BET REACHED");
+        //NSLog(@"MAX BET REACHED");
         passValue = 1000;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MAX BET REACHED" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
     
     if (realTotal < passValue) {
-        NSLog(@"CAN NOT ADD BET");
+        //NSLog(@"CAN NOT ADD BET");
         passValue = 0;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
@@ -536,7 +538,8 @@
         } else {
             [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
         }
-        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:10.2 position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
         [self addChild:showAnte];
     }
 }
@@ -564,7 +567,7 @@
 {
     if (pass == 0)
     {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MUST PLACE BET" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"MUST PLACE BET" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     } else {
         realTotal = realTotal + pass;
@@ -573,10 +576,17 @@
     
     if (realTotal >= 5000)
     {
-        NSLog(@"WINNER - GAME OVER");
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
+        //NSLog(@"WINNER - GAME OVER");
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"WINNER" message:@"YOU WON!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0)
+    {
+        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
     }
 }
 
@@ -584,15 +594,14 @@
 {
     if (pass == 0)
     {
-        NSLog(@"PRE GAME OVER");
+        //NSLog(@"PRE GAME OVER");
     } else {
         realTotal = realTotal - pass;
         [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
     }
     if (realTotal <= 0)
     {
-        NSLog(@"GAME OVER");
-        [[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[MenuLayer scene] withColor:ccWHITE]];
+        //NSLog(@"GAME OVER");
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"LOSER" message:@"GAME OVER!" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     }
@@ -636,8 +645,8 @@
 - (void)higher
 {
     if (passValue <= 0){
-        NSLog(@"PLEASE PLACE BET");
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"PLEASE PLACE BET" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        //NSLog(@"PLEASE PLACE BET");
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"PLEASE PLACE BET" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     } else {
         //GET RANDOM CARD VALUE
@@ -657,11 +666,11 @@
         [self addChild:playerCard];
         
         if (dealerInt == playerInt) {
-            NSLog(@"DRAW");
+            //NSLog(@"DRAW");
             //[self drawPoints];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.mp3"];
         } else if (dealerInt > playerInt) {
-            NSLog(@"PLAYER WINS");
+            //NSLog(@"PLAYER WINS");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
             
@@ -674,10 +683,11 @@
                 [feedback_add setPosition:ccp(-145+size.width/2, 131+size.height/2)];
             }
             [self addChild:feedback_add];
-            [feedback_add runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [scoreLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+            [feedback_add runAction:[CCJumpTo actionWithDuration:.4 position:ccp(-10, 270) height:1 jumps:2]];
             [self performSelector:@selector(removeHchip:) withObject:feedback_add afterDelay:2];
         } else if (playerInt > dealerInt) {
-            NSLog(@"DEALER WINS");
+            //NSLog(@"DEALER WINS");
             [self removePoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.wav"];
             
@@ -690,10 +700,11 @@
                 [feedback_minus setPosition:ccp(-145+size.width/2, 131+size.height/2)];
             }
             [self addChild:feedback_minus];
-            [feedback_minus runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [scoreLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+            [feedback_minus runAction:[CCJumpTo actionWithDuration:.4 position:ccp(-10, 270) height:1 jumps:2]];
             [self performSelector:@selector(removeHchip:) withObject:feedback_minus afterDelay:2];
         } else {
-            NSLog(@"WEIRD");
+            //NSLog(@"WEIRD");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
         }
@@ -705,8 +716,8 @@
 - (void)lower
 {
     if (passValue <= 0){
-        NSLog(@"PLEASE PLACE BET");
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"PLEASE PLACE BET" delegate:self cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+        //NSLog(@"PLEASE PLACE BET");
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ALERT" message:@"PLEASE PLACE BET" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
         [alert show];
     } else {
         //GET RANDOM CARD VALUE
@@ -724,13 +735,12 @@
             playerCard.position = ccp(70+size.width/2, 48+size.height/2);
         }
         [self addChild:playerCard];
-        
         if (dealerInt == playerInt) {
-            NSLog(@"DRAW");
+            //NSLog(@"DRAW");
             //[self drawPoints];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.mp3"];
         } else if (dealerInt < playerInt) {
-            NSLog(@"PLAYER WINS");
+            //NSLog(@"PLAYER WINS");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
             
@@ -743,10 +753,11 @@
                 [feedback_add setPosition:ccp(-145+size.width/2, 131+size.height/2)];
             }
             [self addChild:feedback_add];
-            [feedback_add runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [scoreLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+            [feedback_add runAction:[CCJumpTo actionWithDuration:.4 position:ccp(-10, 270) height:1 jumps:2]];
             [self performSelector:@selector(removeHchip:) withObject:feedback_add afterDelay:2];
         } else if (playerInt < dealerInt) {
-            NSLog(@"DEALER WINS");
+            //NSLog(@"DEALER WINS");
             [self removePoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"wrong.wav"];
             
@@ -759,10 +770,11 @@
                 [feedback_minus setPosition:ccp(-145+size.width/2, 131+size.height/2)];
             }
             [self addChild:feedback_minus];
-            [feedback_minus runAction:[CCJumpTo actionWithDuration:.3 position:ccp(-10, 270) height:1 jumps:2]];
+            [scoreLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+            [feedback_minus runAction:[CCJumpTo actionWithDuration:.4 position:ccp(-10, 270) height:1 jumps:2]];
             [self performSelector:@selector(removeHchip:) withObject:feedback_minus afterDelay:2];
         } else {
-            NSLog(@"WEIRD");
+            //NSLog(@"WEIRD");
             [self addPoints:passValue];
             [[SimpleAudioEngine sharedEngine] playEffect:@"coin.mp3"];
         }
@@ -821,28 +833,27 @@
             {
                 if (moneyflag == 0)
                 {
-                    NSLog(@"FLAG NOT SET");
+                    //NSLog(@"FLAG NOT SET");
                 } else if (moneyflag == 1) {
                     [self callFive];
                     soundFlag = FALSE;
                     [self schedule:@selector(collision:)];
-                    NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
+                    //NSLog(@"COLLISION OCCURED -- CALL FIVE FUNCTION");
                 } else if (moneyflag == 2) {
                     [self callTwentyFive];
                     soundFlag = FALSE;
                     [self schedule:@selector(collision:)];
-                    NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
+                    //NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
                 } else if (moneyflag == 3) {
                     [self callOneHundred];
                     soundFlag = FALSE;
                     [self schedule:@selector(collision:)];
-                    NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
+                    //NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
                 } else {
-                    NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                    //NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
                 }
             } else {
-                NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
-                
+                //NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
             }
         }
     }

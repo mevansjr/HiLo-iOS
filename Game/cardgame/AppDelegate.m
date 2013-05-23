@@ -89,7 +89,7 @@
 	[CCTexture2D PVRImagesHavePremultipliedAlpha:YES];
 
     // Try to start Game Center
-    [[GCHelper sharedInstance] authenticateLocalUser];
+    //[[GCHelper sharedInstance] authenticateLocalUser];
     
 	// and add the scene to the stack. The director will run it when it automatically when the view is displayed.
 	[director_ pushScene: [IntroLayer scene]];

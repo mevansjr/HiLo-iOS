@@ -201,7 +201,6 @@
 		5D61AC88173D4D9B00E9A100 /* shadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D61AC80173D4D9B00E9A100 /* shadow@2x.png */; };
 		5D61AC96173D4DB400E9A100 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D61AC8A173D4DB400E9A100 /* Reachability.m */; };
 		5D61AC97173D4DB400E9A100 /* CustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D61AC8C173D4DB400E9A100 /* CustomCell.m */; };
-		5D61AC9A173D4DB400E9A100 /* UIBorderLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D61AC90173D4DB400E9A100 /* UIBorderLabel.m */; };
 		5D61AC9F173D4E0B00E9A100 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61AC9E173D4E0B00E9A100 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5D61ACA1173D4E1700E9A100 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61ACA0173D4E1700E9A100 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5D61ACA3173D4E2A00E9A100 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61ACA2173D4E2A00E9A100 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -606,8 +605,6 @@
 		5D61AC8A173D4DB400E9A100 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		5D61AC8B173D4DB400E9A100 /* CustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCell.h; sourceTree = "<group>"; };
 		5D61AC8C173D4DB400E9A100 /* CustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomCell.m; sourceTree = "<group>"; };
-		5D61AC8F173D4DB400E9A100 /* UIBorderLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBorderLabel.h; sourceTree = "<group>"; };
-		5D61AC90173D4DB400E9A100 /* UIBorderLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBorderLabel.m; sourceTree = "<group>"; };
 		5D61AC9E173D4E0B00E9A100 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		5D61ACA0173D4E1700E9A100 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5D61ACA2173D4E2A00E9A100 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -1258,8 +1255,6 @@
 				5D61AC8B173D4DB400E9A100 /* CustomCell.h */,
 				5D61AC8C173D4DB400E9A100 /* CustomCell.m */,
 				5D61ACBB173D4F5E00E9A100 /* CustomCell.xib */,
-				5D61AC8F173D4DB400E9A100 /* UIBorderLabel.h */,
-				5D61AC90173D4DB400E9A100 /* UIBorderLabel.m */,
 				5D61ACBD173D4FA900E9A100 /* LeaderBoardViewController.h */,
 				5D61ACBE173D4FA900E9A100 /* LeaderBoardViewController.m */,
 				5D61ACB9173D4F4E00E9A100 /* LeaderBoardViewController.xib */,
@@ -1596,7 +1591,6 @@
 				5D61AB9D173AC01A00E9A100 /* IntroLayer.m in Sources */,
 				5D61AC96173D4DB400E9A100 /* Reachability.m in Sources */,
 				5D61AC97173D4DB400E9A100 /* CustomCell.m in Sources */,
-				5D61AC9A173D4DB400E9A100 /* UIBorderLabel.m in Sources */,
 				5DBB0ED2173D6DF100109C11 /* GCHelper.m in Sources */,
 				5DBB0ED5173D727900109C11 /* RootViewController.m in Sources */,
 				5DBB0ED9173D738D00109C11 /* GKMatchmakerViewController-LandscapeOnly.m in Sources */,

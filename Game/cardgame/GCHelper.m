@@ -278,6 +278,7 @@ static GCHelper *sharedHelper = nil;
 {
     LeaderBoardViewController *l = [[LeaderBoardViewController alloc]initWithNibName:@"LeaderBoardViewController" bundle:nil];
     [self presentViewController:l];
+    [l release];
 }
 
 - (void)playTutorial
@@ -292,6 +293,8 @@ static GCHelper *sharedHelper = nil;
     [player.moviePlayer setShouldAutoplay:YES];
     [player.moviePlayer setMovieSourceType:MPMovieSourceTypeFile];
     [self presentViewController:player];
+    [player release];
+    [videoURL release];
 }
 
 -(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController

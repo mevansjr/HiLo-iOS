@@ -11,7 +11,7 @@
 #import "cocos2d.h"
 #import "GCHelper.h"
 
-@interface GameLayer : CCLayer <CCStandardTouchDelegate, UIGestureRecognizerDelegate>
+@interface GameLayer : CCLayer <CCStandardTouchDelegate, UIGestureRecognizerDelegate, UIAlertViewDelegate>
 {
     CGSize size;
     int dealerInt;

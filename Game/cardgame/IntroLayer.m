@@ -6,8 +6,6 @@
 //  Copyright __MyCompanyName__ 2013. All rights reserved.
 //
 
-
-// Import the interfaces
 #import "IntroLayer.h"
 #import "MenuLayer.h"
 #import "SimpleAudioEngine.h"
@@ -15,22 +13,13 @@
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
 #pragma mark - IntroLayer
 
-// HelloWorldLayer implementation
 @implementation IntroLayer
 
-// Helper class method that creates a Scene with the HelloWorldLayer as the only child.
 +(CCScene *) scene
 {
-	// 'scene' is an autorelease object.
 	CCScene *scene = [CCScene node];
-	
-	// 'layer' is an autorelease object.
 	IntroLayer *layer = [IntroLayer node];
-	
-	// add layer as a child to scene
 	[scene addChild: layer];
-	
-	// return the scene
 	return scene;
 }
 
@@ -97,7 +86,6 @@
         }
     }
 	
-	// In one second transition to the new scene
 	[self scheduleOnce:@selector(makeTransition:) delay:1];
 }
 

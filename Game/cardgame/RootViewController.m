@@ -72,7 +72,7 @@
 	return ( interfaceOrientation == UIInterfaceOrientationPortrait );
 	
 #elif GAME_AUTOROTATION == kGameAutorotationUIViewController
-	//
+    
 	// EAGLView will be rotated by the UIViewController
 	//
 	// Sample: Autorotate only in landscpe mode
@@ -83,18 +83,17 @@
 	
 #else
 #error Unknown value in GAME_AUTOROTATION
-	
 #endif // GAME_AUTOROTATION
-	
-	
-	// Shold not happen
+    
 	return NO;
 }
 
 //
 // This callback only will be called when GAME_AUTOROTATION == kGameAutorotationUIViewController
 //
+
 #if GAME_AUTOROTATION == kGameAutorotationUIViewController
+
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	//
@@ -121,20 +120,15 @@
 	}
 	glView.frame = rect;
 }
-#endif // GAME_AUTOROTATION == kGameAutorotationUIViewController
 
+#endif
 
 - (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 

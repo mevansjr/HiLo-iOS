@@ -12,7 +12,6 @@
 #import "Reachability.h"
 #import "CustomCell.h"
 #import <FacebookSDK/FacebookSDK.h>
-#import "UIBorderLabel.h"
 
 
 @interface LeaderBoardViewController ()
@@ -186,13 +185,6 @@
     
     UIImage *headerImage = [UIImage imageNamed:@"logoleaderboard.png"];
     navItem.titleView = [[UIImageView alloc] initWithImage:headerImage];
-    
-    [[UINavigationBar appearance] setTitleTextAttributes: @{
-                                UITextAttributeTextColor: [UIColor whiteColor],
-                          UITextAttributeTextShadowColor: [UIColor blackColor],
-                         UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)],
-                                     UITextAttributeFont: [UIFont fontWithName:@"MarkerFelt-Wide" size:20.0f]
-     }];
 }
 
 -(void)viewDidUnload
@@ -211,11 +203,7 @@
     if (section == 0)
     {
         NSString *s = @"Top Scores";
-        UILabel *l = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 300, 14)];
-        [l setFont:[UIFont fontWithName:@"CourierNewPS-BoldMT" size:8]];
-        [l setTextColor:[UIColor whiteColor]];
-        l.text = s;
-        return l.text;
+        return s;
     }
     return nil;
 }
