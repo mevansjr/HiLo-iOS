@@ -11,6 +11,7 @@
 #import "SimpleAudioEngine.h"
 
 #define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds ].size.height - (double)568) < DBL_EPSILON)
+#define IS_RETINA ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0))
 #pragma mark - IntroLayer
 
 @implementation IntroLayer
@@ -38,22 +39,20 @@
 	if (IS_IPHONE_5) {
         background = [CCSprite spriteWithFile:@"blank_bg-568@2x.png"];
         background.rotation = 90;
-    } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    } else {
         background = [CCSprite spriteWithFile:@"blank_bg.png"];
         background.rotation = 90;
-    } else {
-		background = [CCSprite spriteWithFile:@"Default-Landscape~ipad.png"];
-	}
+    } 
 	background.position = ccp(size.width/2, size.height/2);
 	[self addChild: background];
     
     //SET SPRITE SHEETS
-    if (IS_IPHONE_5) {
+    if (IS_IPHONE_5 || IS_RETINA) {
         CCTexture2D *iphone5_tex = [[CCTextureCache sharedTextureCache] addImage:@"splashtex@2x.png"];
         [[CCSpriteFrameCache sharedSpriteFrameCache]addSpriteFramesWithFile:@"splashtex@2x.plist" texture:iphone5_tex];
         spriteSheet = [CCSpriteBatchNode batchNodeWithTexture:iphone5_tex];
         [self addChild:spriteSheet];
-    } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    } else {
         CCTexture2D *tex = [[CCTextureCache sharedTextureCache] addImage:@"splashtex.png"];
         [[CCSpriteFrameCache sharedSpriteFrameCache]addSpriteFramesWithFile:@"splashtex.plist" texture:tex];
         spriteSheet = [CCSpriteBatchNode batchNodeWithTexture:tex];
@@ -62,7 +61,7 @@
     
     //LOGO ANIMATION
     NSMutableArray *logoFrames = [NSMutableArray array];
-    if (IS_IPHONE_5) {
+    if (IS_IPHONE_5 || IS_RETINA) {
         for (int i=1; i<=5; i++) {
             [logoFrames addObject:
              [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"splashlogo_%d@2x.png",i]]];
@@ -73,7 +72,7 @@
             [logo runAction:logoAction];
             [spriteSheet addChild:logo];
         }
-    } else if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    } else {
         for (int i=1; i<=5; i++) {
             [logoFrames addObject:
              [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"splashlogo_%d.png",i]]];

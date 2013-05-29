@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D53B4401754173A007E0EF7 /* rebet.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D53B43E1754173A007E0EF7 /* rebet.png */; };
+		5D53B4411754173A007E0EF7 /* rebet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D53B43F1754173A007E0EF7 /* rebet@2x.png */; };
 		5D61AA0C173AC01800E9A100 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61AA0B173AC01800E9A100 /* QuartzCore.framework */; };
 		5D61AA0E173AC01800E9A100 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61AA0D173AC01800E9A100 /* OpenGLES.framework */; };
 		5D61AA10173AC01800E9A100 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D61AA0F173AC01800E9A100 /* OpenAL.framework */; };
@@ -270,6 +272,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D53B43E1754173A007E0EF7 /* rebet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rebet.png; path = Resources/rebet.png; sourceTree = "<group>"; };
+		5D53B43F1754173A007E0EF7 /* rebet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "rebet@2x.png"; path = "Resources/rebet@2x.png"; sourceTree = "<group>"; };
 		5D61AA08173AC01800E9A100 /* hilo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hilo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D61AA0B173AC01800E9A100 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5D61AA0D173AC01800E9A100 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -791,6 +795,8 @@
 				5D61ABAF173AD93900E9A100 /* tune.wav */,
 				5D61ABB0173AD93900E9A100 /* wrong.wav */,
 				5D61ABAB173AD8CE00E9A100 /* musicloop.wav */,
+				5D53B43E1754173A007E0EF7 /* rebet.png */,
+				5D53B43F1754173A007E0EF7 /* rebet@2x.png */,
 				5DE91DDB174CE8DB002C8CC9 /* feedback_add.png */,
 				5DE91DDC174CE8DB002C8CC9 /* feedback_add@2x.png */,
 				5DE91DDD174CE8DB002C8CC9 /* feedback_minus.png */,
@@ -1473,6 +1479,8 @@
 				5DE91DE0174CE8DB002C8CC9 /* feedback_add@2x.png in Resources */,
 				5DE91DE1174CE8DB002C8CC9 /* feedback_minus.png in Resources */,
 				5DE91DE2174CE8DB002C8CC9 /* feedback_minus@2x.png in Resources */,
+				5D53B4401754173A007E0EF7 /* rebet.png in Resources */,
+				5D53B4411754173A007E0EF7 /* rebet@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1645,6 +1653,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mark Evans (3T3AA4AXKC)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mark Evans (3T3AA4AXKC)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1661,6 +1671,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = hilo;
+				PROVISIONING_PROFILE = "89141BF1-A0B5-4625-9C0E-0A2D1B7A4777";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "89141BF1-A0B5-4625-9C0E-0A2D1B7A4777";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1669,6 +1681,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mark Evans (3T3AA4AXKC)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mark Evans (3T3AA4AXKC)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1684,6 +1698,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = hilo;
+				PROVISIONING_PROFILE = "89141BF1-A0B5-4625-9C0E-0A2D1B7A4777";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "89141BF1-A0B5-4625-9C0E-0A2D1B7A4777";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
