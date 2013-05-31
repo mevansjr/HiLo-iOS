@@ -29,6 +29,7 @@
     BOOL pauseFlag;
     BOOL firstClearFlag;
     BOOL gameplayFlag;
+    BOOL maxbetFlag;
     NSString* feedbackFlag;
     CCSprite *background;
     CCSprite *feedback_minus;

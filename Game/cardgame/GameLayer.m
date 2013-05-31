@@ -221,6 +221,7 @@ static const float kChipTransition = .2;
     }
     
     [self removeChild:pausemenu cleanup:TRUE];
+    
     //ADD RESUME MENU
     CCMenuItemSprite *resumeImage = [CCMenuItemSprite itemWithNormalSprite:[CCSprite spriteWithFile:@"resume.png"] selectedSprite:[CCSprite spriteWithFile:@"resume.png"] target:self selector:@selector(resumePlayCall)];
     resumemenu = [CCMenu menuWithItems:resumeImage, nil];
@@ -312,6 +313,7 @@ static const float kChipTransition = .2;
 
 - (void)resetBet
 {
+    maxbetFlag = NO;
     if (passValue <= 0)
     {
         getTotal = realTotal;
@@ -345,6 +347,13 @@ static const float kChipTransition = .2;
         [[CCDirector sharedDirector] pause];
     } else {
         [[CCDirector sharedDirector] resume];
+    }
+    
+    if (maxbetFlag == YES)
+    {
+        coin_menu.isTouchEnabled = FALSE;
+    } else {
+        coin_menu.isTouchEnabled = TRUE;
     }
 }
 
@@ -415,6 +424,7 @@ static const float kChipTransition = .2;
 - (void)callFive
 {
     int ante = 5;
+    maxbetFlag = NO;
     if (passValue == 0)
     {
         passValue = ante;
@@ -431,6 +441,7 @@ static const float kChipTransition = .2;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
+        maxbetFlag = YES;
         passValue = 1000;
         tempTotal = realTotal - passValue;
         rebetInt = passValue;
@@ -438,6 +449,7 @@ static const float kChipTransition = .2;
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else {
         //NSLog(@"MAX BET REACHED");
+        maxbetFlag = YES;
         passValue = 1000;
         tempTotal = realTotal - passValue;
         rebetInt = passValue;
@@ -471,6 +483,7 @@ static const float kChipTransition = .2;
 - (void)callTwentyFive
 {
     int ante = 25;
+    maxbetFlag = NO;
     if (passValue == 0)
     {
         passValue = ante;
@@ -488,6 +501,7 @@ static const float kChipTransition = .2;
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
         passValue = 1000;
+        maxbetFlag = YES;
         rebetInt = passValue;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
@@ -495,6 +509,7 @@ static const float kChipTransition = .2;
     } else {
         //NSLog(@"MAX BET REACHED");
         passValue = 1000;
+        maxbetFlag = YES;
         rebetInt = passValue;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
@@ -527,6 +542,7 @@ static const float kChipTransition = .2;
 - (void)callOneHundred
 {
     int ante = 100;
+    maxbetFlag = NO;
     if (passValue == 0)
     {
         passValue = ante;
@@ -544,6 +560,7 @@ static const float kChipTransition = .2;
         [scoreLabel setString:[NSString stringWithFormat:@"%i", tempTotal]];
     } else if (passValue == maxBet){
         passValue = 1000;
+        maxbetFlag = YES;
         rebetInt = passValue;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
@@ -551,6 +568,7 @@ static const float kChipTransition = .2;
     } else {
         //NSLog(@"MAX BET REACHED");
         passValue = 1000;
+        maxbetFlag = YES;
         rebetInt = passValue;
         tempTotal = realTotal - passValue;
         [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
@@ -878,101 +896,104 @@ static const float kChipTransition = .2;
             CGRect rebetRect = CGRectMake(rebet.boundingBox.origin.x, rebet.boundingBox.origin.y, rebet.boundingBox.size.width, rebet.boundingBox.size.height);
             
             CGRect *checkForRebet = CGRectContainsPoint(rebetRect,location);
-            if (checkForRebet)
+            if (maxbetFlag == NO)
             {
-                NSLog(@"rebet selected");
-                NSLog(@"%i", rebetInt);
-                if (rebetInt <= 0)
+                if (checkForRebet)
                 {
-                    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Re-Bet value not set!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
-                    [alert show];
-                } else {
-                    if (moneyflag == 0)
+                    NSLog(@"rebet selected");
+                    NSLog(@"%i", rebetInt);
+                    if (rebetInt <= 0)
                     {
-                        //NSLog(@"FLAG NOT SET");
-                    } else if (moneyflag == 1) {
-                        showAnte = [CCSprite spriteWithFile:@"chip5.png"];
-                        if (IS_IPHONE_5) {
-                            [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
-                        } else {
-                            [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
-                        }
-                        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
-                        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-                        [self addChild:showAnte];
-                        passValue = rebetInt;
-                        getTotal = realTotal - passValue;
-                        if (getTotal < 0)
-                        {
-                            passValue = 0;
-                            rebetInt = 0;
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
-                            showAnte = [CCSprite spriteWithFile:@"bet.png"];
-                            [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
-                            [self addChild:showAnte];
-                            UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
-                            [a show];
-                        } else {
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
-                        }
-                    } else if (moneyflag == 2) {
-                        showAnte = [CCSprite spriteWithFile:@"chip25.png"];
-                        if (IS_IPHONE_5) {
-                            [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
-                        } else {
-                            [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
-                        }
-                        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
-                        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-                        [self addChild:showAnte];
-                        passValue = rebetInt;
-                        getTotal = realTotal - passValue;
-                        if (getTotal < 0)
-                        {
-                            passValue = 0;
-                            rebetInt = 0;
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
-                            showAnte = [CCSprite spriteWithFile:@"bet.png"];
-                            [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
-                            [self addChild:showAnte];
-                            UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
-                            [a show];
-                        } else {
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
-                        }
-                    } else if (moneyflag == 3) {
-                        showAnte = [CCSprite spriteWithFile:@"chip100.png"];
-                        if (IS_IPHONE_5) {
-                            [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
-                        } else {
-                            [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
-                        }
-                        [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
-                        [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
-                        [self addChild:showAnte];
-                        passValue = rebetInt;
-                        getTotal = realTotal - passValue;
-                        if (getTotal < 0)
-                        {
-                            passValue = 0;
-                            rebetInt = 0;
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
-                            showAnte = [CCSprite spriteWithFile:@"bet.png"];
-                            [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
-                            [self addChild:showAnte];
-                            UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
-                            [a show];
-                        } else {
-                            [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
-                            [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
-                        }
+                        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Re-Bet value not set!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+                        [alert show];
                     } else {
-                        //NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                        if (moneyflag == 0)
+                        {
+                            //NSLog(@"FLAG NOT SET");
+                        } else if (moneyflag == 1) {
+                            showAnte = [CCSprite spriteWithFile:@"chip5.png"];
+                            if (IS_IPHONE_5) {
+                                [showAnte setPosition:ccp(-225+size.width/2, -70+size.height/2)];
+                            } else {
+                                [showAnte setPosition:ccp(-195+size.width/2, -90+size.height/2)];
+                            }
+                            [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+                            [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+                            [self addChild:showAnte];
+                            passValue = rebetInt;
+                            getTotal = realTotal - passValue;
+                            if (getTotal < 0)
+                            {
+                                passValue = 0;
+                                rebetInt = 0;
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+                                showAnte = [CCSprite spriteWithFile:@"bet.png"];
+                                [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
+                                [self addChild:showAnte];
+                                UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+                                [a show];
+                            } else {
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+                            }
+                        } else if (moneyflag == 2) {
+                            showAnte = [CCSprite spriteWithFile:@"chip25.png"];
+                            if (IS_IPHONE_5) {
+                                [showAnte setPosition:ccp(-225+size.width/2, -40+size.height/2)];
+                            } else {
+                                [showAnte setPosition:ccp(-195+size.width/2, -60+size.height/2)];
+                            }
+                            [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+                            [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+                            [self addChild:showAnte];
+                            passValue = rebetInt;
+                            getTotal = realTotal - passValue;
+                            if (getTotal < 0)
+                            {
+                                passValue = 0;
+                                rebetInt = 0;
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+                                showAnte = [CCSprite spriteWithFile:@"bet.png"];
+                                [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
+                                [self addChild:showAnte];
+                                UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+                                [a show];
+                            } else {
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+                            }
+                        } else if (moneyflag == 3) {
+                            showAnte = [CCSprite spriteWithFile:@"chip100.png"];
+                            if (IS_IPHONE_5) {
+                                [showAnte setPosition:ccp(-225+size.width/2, -10+size.height/2)];
+                            } else {
+                                [showAnte setPosition:ccp(-195+size.width/2, -30+size.height/2)];
+                            }
+                            [betLabel runAction:[CCSequence actionOne:[CCScaleBy actionWithDuration:.2 scale:1.2] two:[CCScaleTo actionWithDuration:.3 scale:1]]];
+                            [showAnte runAction:[CCSequence actionOne:[CCMoveTo actionWithDuration:kChipTransition position:ccp(anteSpot.x+1, anteSpot.y+1)] two:[CCRotateBy actionWithDuration:.5 angle:360]]];
+                            [self addChild:showAnte];
+                            passValue = rebetInt;
+                            getTotal = realTotal - passValue;
+                            if (getTotal < 0)
+                            {
+                                passValue = 0;
+                                rebetInt = 0;
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", realTotal]];
+                                showAnte = [CCSprite spriteWithFile:@"bet.png"];
+                                [showAnte setPosition:ccp(3+anteSpot.x, anteSpot.y)];
+                                [self addChild:showAnte];
+                                UIAlertView *a = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Not enough chips!" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+                                [a show];
+                            } else {
+                                [betLabel setString:[NSString stringWithFormat:@"Bet: %i", passValue]];
+                                [scoreLabel setString:[NSString stringWithFormat:@"%i", getTotal]];
+                            }
+                        } else {
+                            //NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                        }
                     }
                 }
             }
@@ -983,30 +1004,33 @@ static const float kChipTransition = .2;
             CGRect showAnteRect = CGRectMake(showAnteSpot.boundingBox.origin.x, showAnteSpot.boundingBox.origin.y, showAnteSpot.boundingBox.size.width, showAnteSpot.boundingBox.size.height);
             
             CGRect *checkForAnte = CGRectContainsPoint(showAnteRect,location);
-            if (checkForAnte)
+            if (maxbetFlag == NO)
             {
-                if (moneyflag == 0)
+                if (checkForAnte)
                 {
-                    //NSLog(@"FLAG NOT SET");
-                } else if (moneyflag == 1) {
-                    [self callFive];
-                    soundFlag = FALSE;
-                    [self schedule:@selector(collision:)];
-                } else if (moneyflag == 2) {
-                    [self callTwentyFive];
-                    soundFlag = FALSE;
-                    [self schedule:@selector(collision:)];
-                    //NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
-                } else if (moneyflag == 3) {
-                    [self callOneHundred];
-                    soundFlag = FALSE;
-                    [self schedule:@selector(collision:)];
-                    //NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
+                    if (moneyflag == 0)
+                    {
+                        //NSLog(@"FLAG NOT SET");
+                    } else if (moneyflag == 1) {
+                        [self callFive];
+                        soundFlag = FALSE;
+                        [self schedule:@selector(collision:)];
+                    } else if (moneyflag == 2) {
+                        [self callTwentyFive];
+                        soundFlag = FALSE;
+                        [self schedule:@selector(collision:)];
+                        //NSLog(@"COLLISION OCCURED -- CALL TWENTY FIVE FUNCTION");
+                    } else if (moneyflag == 3) {
+                        [self callOneHundred];
+                        soundFlag = FALSE;
+                        [self schedule:@selector(collision:)];
+                        //NSLog(@"COLLISION OCCURED -- CALL ONE HUNDRED FUNCTION");
+                    } else {
+                        //NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                    }
                 } else {
-                    //NSLog(@"FLAG NOT SET PROPERLY: x:%f, y:%f", location.x, location.y);
+                    //NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
                 }
-            } else {
-                //NSLog(@"TOUCHED OUTSIDE OF ANTE SPOT - NO COLLISION");
             }
         }
     }
